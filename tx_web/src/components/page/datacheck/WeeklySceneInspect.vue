@@ -1,0 +1,432 @@
+<template>
+	<div class="basic" style="flex:1;display:flex=1">
+		<div class="container" id="userManage1">
+			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+				<el-button type="primary" class="button-style" title="选择筛选维度" size icon="el-icon-folder-add" @click="handleExcept()">选择筛选维度</el-button>
+				<!-- 草稿 -->
+				<el-tab-pane label="草稿" name="first">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables1">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData1.length">
+						</el-pagination> 
+					</div>
+				</el-tab-pane>
+				<!-- 整改中 -->
+				<el-tab-pane label="整改中" name="second">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables2">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData2.length">
+						</el-pagination>
+					</div>
+				</el-tab-pane>
+				<!-- 延期 -->
+				<el-tab-pane label="延期" name="third">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables3">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData3.length">
+						</el-pagination>
+					</div>
+				</el-tab-pane>
+				<!-- 逾期 -->
+				<el-tab-pane label="逾期" name="fourth">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables4">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData4.length">
+						</el-pagination>
+					</div>
+				</el-tab-pane>
+				<!-- 未完成 -->
+				<el-tab-pane label="未完成" name="five">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables5">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData5.length">
+						</el-pagination>
+					</div>
+				</el-tab-pane>
+				<!-- 已完成 -->
+				<el-tab-pane label="已完成" name="six">
+					<el-table :height="this.commonFunc.screeHeight" border class="table" ref="multipleTable" header-cell-class-name="table-header" @selection-change="handleSelectionChange"
+					 :data="tables6">
+						<el-table-column type="selection" width="55"></el-table-column>
+						<el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
+						<el-table-column prop="inspectCode" label="通知单编号" align="center"></el-table-column>
+						<el-table-column prop="inspectLevel" label="检查层级" align="center"></el-table-column>
+						<el-table-column prop="inspectPosition" label="楼层信息" align="center"></el-table-column>
+						<el-table-column prop="inspectUnit" label="检查单位" align="center"></el-table-column>
+						<el-table-column prop="inspectObj" label="工程名称" align="center"></el-table-column>
+						<el-table-column prop="inspectDate" label="检查日期" align="center"></el-table-column>
+						<el-table-column label="操作" width="180" align="center">
+							<template slot="header" slot-scope="scope">  
+								<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+							</template>
+							<template slot-scope="scope">
+								<el-button type="text" icon="el-icon-edit" @click="handleJump(scope.$index, scope.row)">详情</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+					<div class="pagination">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
+						 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData6.length">
+						</el-pagination>
+					</div>
+				</el-tab-pane>
+			</el-tabs>
+		</div>
+		<InspectExcept1 :dialogExcept="dialogExcept" @handleSelectChild="handleSelect"></InspectExcept1>
+	</div>
+</template>
+<script>
+	import InspectExcept1 from "../../dialog/datacheck/InspectExcept1.vue"
+	export default {
+		name: 'basetable',
+		components: {
+			InspectExcept1
+		},
+		data() {
+			return {
+				type: 'edit',
+				currentPage: 1, //初始页
+				pagesize: 10, //    每页的数据
+				query: {
+					address: '',
+					name: '',
+					pageIndex: 1,
+					pageSize: 10
+				},
+				dialogExcept: {
+					show: false
+				},
+				activeName: 'first',
+				search: '',
+				search_world: '',
+				tableData1: [],
+				tableData2: [],
+				tableData3: [],
+				tableData4: [],
+				tableData5: [],
+				tableData6: [],
+				isShow: false,
+				level: '总公司'
+			};
+		},
+		mounted() {
+			this.getNoticeData();
+		},
+		computed: {
+			newName() {
+				return this.query.name;
+			},
+			// 模糊搜索
+			tables1() {
+				const search = this.search
+				if (search) {
+					return this.tableData1.filter(data => {
+						return Object.keys(data).some(key => {
+							return String(data[key]).toLowerCase().indexOf(search) > -1
+						})
+					})
+				}
+				return this.tableData1
+			},
+			tables2() {
+				const search = this.search
+				if (search) {
+					return this.tableData2.filter(data => {
+						return Object.keys(data).some(key => {
+							return String(data[key]).toLowerCase().indexOf(search) > -1
+						})
+					})
+				}
+				return this.tableData2
+			},
+			tables3() {
+				const search = this.search
+				if (search) {
+					return this.tableData3.filter(data => {
+						return Object.keys(data).some(key => {
+							return String(data[key]).toLowerCase().indexOf(search) > -1
+						})
+					})
+				}
+				return this.tableData3
+			},
+			tables4() {
+				this.total = this.tableData4.length
+				return this.tableData4.slice((this.currentPage - 1) * this.pagesize, this.currentPage * this.pagesize)
+			},
+			tables5() {
+				this.total = this.tableData5.length
+				return this.tableData5.slice((this.currentPage - 1) * this.pagesize, this.currentPage * this.pagesize)
+			},
+			tables6() {
+				this.total = this.tableData6.length
+				return this.tableData6.slice((this.currentPage - 1) * this.pagesize, this.currentPage * this.pagesize)
+			},
+		},
+		watch: {
+			newName(val) {
+				if (val == '') {
+					this.searchKey = 'show';
+				}
+			}
+		},
+		methods: {
+			// 多选操作
+			handleSelectionChange(val) {
+				this.multipleSelection = val;
+			},
+			// 初始页currentPage、初始每页数据数pagesize和数据data
+			handleSizeChange: function(size) {
+				this.pagesize = size;
+			},
+			handleCurrentChange: function(currentPage) {
+				this.currentPage = currentPage;
+			},
+			handleClick(tab, event) { //表格tab切换触发的操作函数
+				// console.log(tab, event);
+			},
+			//获取通知单数据
+			getNoticeData() {
+				var that = this
+				var fd = new FormData()
+				let userInfo = localStorage.getItem('userInfo')
+				userInfo = JSON.parse(userInfo)
+				fd.append('flag', 'getNoticeData')
+				fd.append('userId', userInfo.userId)
+				fd.append('level', this.level)
+				this.$axios.post(that.$adminUrl + `/datacheck/WeeklyInspect/WeeklySceneInspect.php`, fd).then(res => {
+					console.log(res.data.data)
+					if (res.data.code) {
+						let draftIndex = 1
+						let rectification = 1
+						let finishedIndex = 1
+						let closedIndex = 1
+						for(var i=0;i<res.data.data.length;i++){
+							if(res.data.data[i].noticeState=="草稿"){
+								res.data.data[i].index = draftIndex
+								this.tableData1.push(res.data.data[i])
+								draftIndex++
+							}else if(res.data.data[i].noticeState=="整改中"){
+								res.data.data[i].index = draftIndex
+								this.tableData2.push(res.data.data[i])
+								rectification++
+							}else if(res.data.data[i].noticeState=="延期"){
+								res.data.data[i].index = finishedIndex
+								this.tableData3.push(res.data.data[i])
+								finishedIndex++
+							}else if(res.data.data[i].noticeState=="逾期"){
+								res.data.data[i].index = closedIndex
+								this.tableData4.push(res.data.data[i])
+								closedIndex++
+							}else if(res.data.data[i].noticeState=="未完成"){
+								res.data.data[i].index = closedIndex
+								this.tableData5.push(res.data.data[i])
+								closedIndex++
+							}else if(res.data.data[i].noticeState=="已完成"){
+								res.data.data[i].index = closedIndex
+								this.tableData6.push(res.data.data[i])
+								closedIndex++
+							}
+						}
+					}
+				})
+			},
+			//详情
+			handleJump(index, row) {
+				//每次进入存储session值，以防子页面刷新数据丢失
+				sessionStorage.setItem('sceneInsData', JSON.stringify(row))
+				// console.log(row)
+				this.$router.push({
+					name: 'sceneInsDetail',
+					params: row
+				})
+			},
+			//打开筛选模态框
+			handleExcept() {
+				this.dialogExcept.show = true;
+			},
+			//接收子组件传值
+			handleSelect(data) {
+				let res = data
+				if (res.code) {
+					let draftIndex = 1
+					let rectification = 1
+					let delayIndex = 1
+					let overdueIndex = 1
+					let unfinishedIndex = 1
+					let finishIndex = 1
+					this.tableData1 = []
+					this.tableData2 = []
+					this.tableData3 = []
+					this.tableData4 = []
+					this.tableData5 = []
+					this.tableData6 = []
+					for(var i=0;i<res.data.length;i++){
+						if(res.data[i].noticeState=="草稿"){
+							res.data[i].index = draftIndex
+							this.tableData1.push(res.data[i])
+							draftIndex++
+						}else if(res.data[i].noticeState=="整改中"){
+							res.data[i].index = draftIndex
+							this.tableData2.push(res.data[i])
+							rectification++
+						}else if(res.data[i].noticeState=="延期"){
+							res.data[i].index = delayIndex
+							this.tableData3.push(res.data[i])
+							delayIndex++
+						}else if(res.data[i].noticeState=="逾期"){
+							res.data[i].index = overdueIndex
+							this.tableData4.push(res.data[i])
+							overdueIndex++
+						}else if(res.data[i].noticeState=="未完成"){
+							res.data[i].index = unfinishedIndex
+							this.tableData5.push(res.data[i])
+							unfinishedIndex++
+						}else if(res.data[i].noticeState=="已完成"){
+							res.data[i].index = finishIndex
+							this.tableData6.push(res.data[i])
+							finishIndex++
+						}
+					}
+				}
+			}
+		},
+	};
+</script>
+<style scoped>
+	.handle-box {
+		margin-bottom: 20px;
+	}
+
+	.handle-select {
+		width: 120px;
+	}
+
+	.handle-input {
+		width: 300px;
+		display: inline-block;
+	}
+
+	.table {
+		width: 100%;
+		font-size: 14px;
+	}
+
+	.red {
+		color: #ff0000;
+	}
+
+	.mr10 {
+		margin-right: 10px;
+	}
+
+	.table-td-thumb {
+		display: block;
+		margin: auto;
+		width: 40px;
+		height: 40px;
+	}
+
+	.green {
+		color: #67c23a;
+	}
+	
+	.button-style {
+		margin: 5px;
+	}
+</style>
