@@ -1,0 +1,28 @@
+/* 本项目样式 */
+.bg-main {
+	background-color: #FF4A6A;
+}
+
+.text-main {
+	color: #FF4A6A;
+}
+
+.inv-h-w {
+	background-color: #ffffff;
+	height: 80upx;
+	display: flex;
+}
+
+.inv-h {
+	font-size: 24upx;
+	flex: 1;
+	text-align: center;
+	color: #c9c9c9;
+	height: 80upx;
+	line-height: 80upx !important;
+}
+
+.inv-h-se {
+	color: #5ba7ff;
+	border-bottom: 4upx solid #5ba7ff;
+}

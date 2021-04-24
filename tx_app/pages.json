@@ -1,0 +1,337 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页
+		{
+		    "path" : "pages/login/Login",
+		    "style" : {
+				"app-plus":{
+					"titleNView":false//取消导航栏
+				}
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "同欣质量管理系统",
+				"enablePullDownRefresh": false,
+				"app-plus":{
+					"bounce":"none"
+				}
+					
+			}
+		}
+        ,{
+            "path" : "pages/msg/Msg",
+            "style" : {
+				"navigationBarTitleText": "消息",
+				"app-plus":{
+					"bounce":"none"
+				}
+			}
+        }
+		,{
+			"path": "pages/msg/TodoNotice",
+			"style": {}
+		}
+		,{
+			"path": "pages/msg/QualityWarning",
+			"style": {}
+		}
+        ,{
+            "path" : "pages/my/My",
+            "style" : {
+				"navigationBarTitleText": "系统设置",
+				"app-plus":{
+					"bounce":"none"
+				}
+			}
+        }
+        ,{
+            "path" : "pages/index/change_project/change_project",
+            "style" : {
+				"navigationBarTitleText": "工程定位筛选"
+			}
+        }
+        ,{
+            "path" : "components/common/scroll/scroll",
+            "style" : {}
+        }
+        ,{
+            "path" : "components/common/pick-date/pick-date",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/module_project/SpecialAdmin/SpecialAdmin",
+            "style" : {
+				"navigationBarTitleText": "砼专项管理"
+			}
+        }
+		,{
+		    "path" : "pages/module_project/SpecialAdmin/pour",
+		    "style" : {
+				"navigationBarTitleText": "砼浇筑管理",
+				"app-plus":{
+					"titleNView":false
+				}
+			}
+		}
+		,{
+		    "path" : "pages/module_project/SpecialAdmin/removal",
+		    "style" : {
+				"navigationBarTitleText": "砼拆模管理"
+			}
+		}
+		,{
+		    "path" : "pages/module_project/SpecialAdmin/concrete",
+		    "style" : {
+				"navigationBarTitleText": "砼强度管理"
+			}
+		}
+		,{
+		    "path" : "pages/module_project/SpecialAdmin/create_pour",
+		    "style" : {
+				"navigationBarTitleText": "浇筑令"
+			}
+		}
+		,{
+		    "path" : "pages/module_project/SpecialAdmin/PourDetails",
+		    "style" : {
+				"navigationBarTitleText": "任务详情"
+			}
+		}
+		,{
+			"path" : "pages/module_project/SpecialAdmin/SideDetails",
+			"style" : {
+				"navigationBarTitleText": "任务详情"
+			}
+		}
+		,{
+			"path" : "pages/module_project/SpecialAdmin/removalDetails",
+			"style" : {
+				"navigationBarTitleText": "任务详情"
+			}
+		}
+		,{
+			"path" : "pages/module_project/SpecialAdmin/UploadPicture",
+			"style" : {
+				"navigationBarTitleText": "上传图片"
+			}
+		}
+        // ,{
+        //     "path" : "pages/module_project/Measure/Measure",
+        //     "style" : {}
+        // }
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/WeeklyInspect",
+            "style" : {
+				"navigationBarTitleText": "每周巡检"
+			}
+        },{
+            "path" : "pages/module_project/WeeklyInspect/SceneInspect",
+            "style" : {
+				"navigationBarTitleText": "现场质量巡检",
+				"app-plus":{
+					"titleNView":false
+				}
+			}
+        }
+        ,{
+            "path" : "pages/module_project/ExternalInspect/ExternalInspect",
+            "style" : {}
+        }
+        // ,{
+        //     "path" : "pages/module_project/DataStatistics/DataStatistics",
+        //     "style" : {}
+        // }
+        ,{
+            "path" : "pages/module_company/QualityInspect/QualityInspect",
+            "style" : {}
+        }
+        // ,{
+        //     "path" : "pages/module_company/DataStatistics/DataStatistics",
+        //     "style" : {}
+        // }
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/AddSceneInspect",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "现场质量巡检",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+		,{
+			"path":"pages/module_project/DataStatistics/problems",
+			"style": {
+				"navigationBarTitleText": "数据统计",
+				"enablePullDownRefresh": false
+			}
+		}
+		,{
+			"path":"pages/test",
+			"style": {
+				"navigationBarTitleText": "test",
+				"enablePullDownRefresh": false
+			}
+		}
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/SelectItem",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "违章条目",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/NoticeDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "现场质量巡检详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/DefectDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "记录详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/module_project/WeeklyInspect/UploadPicture",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": ""
+			}
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/InspectAccept",
+		    "style" : {
+		    	"navigationBarTitleText": "检查验收",
+				"app-plus":{
+					"titleNView":false
+				}
+		    }
+		}
+		,{
+            "path" : "pages/module_project/InspectAccept/AddInspectAccept",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "检查验收",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+		,{
+		    "path" : "pages/module_project/InspectAccept/ProInspect",
+		    "style" :                 
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false,
+				"app-plus":{
+					"titleNView":false
+				}
+				
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/AddItemInspect",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		},
+		{
+				    "path" : "pages/module_project/ActualMeasure/ActualMeasure",
+				    "style" : {
+				    	"navigationBarTitleText": "实测实量",
+						"app-plus":{
+							"titleNView":{ 
+							  "buttons":[ 
+								   {
+										"float":"right",
+										"type":"menu"
+								   }
+								]
+							}
+						}
+				    }
+				}
+				,{
+				    "path" : "pages/module_project/ActualMeasure/AddActualMeasure",
+				    "style" :
+				    {
+				        "navigationBarTitleText": "实测实量",
+				        "enablePullDownRefresh": false
+				    }
+				}
+				,{
+				    "path" : "pages/module_project/ActualMeasure/MeasurePoint",
+				    "style" :
+				    {
+				        "navigationBarTitleText": "实测实量",
+				        "enablePullDownRefresh": false
+				    }
+				}
+				,{
+				    "path" : "pages/module_project/ActualMeasure/PointArrange",
+				    "style" :
+				    {
+				        "navigationBarTitleText": "实测实量",
+				        "enablePullDownRefresh": false
+				    }
+				}
+				,{
+				    "path" : "pages/module_project/ActualMeasure/PointSetting",
+				    "style" :
+				    {
+				        "navigationBarTitleText": "实测实量",
+				        "enablePullDownRefresh": false
+				    }
+				}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "同欣科技",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar":{
+		"color":"#333333",
+		"selectedColor":"#007AFF",
+		"backgroundColor":"#FFFFFF",
+		"borderStyle":"black",
+		"list":[{
+			"pagePath":"pages/msg/Msg",
+			"text":"消息",
+			"iconPath":"static/tabar/message.png",
+			"selectedIconPath":"static/tabar/messageed.png"
+		},{
+			"pagePath":"pages/index/index",
+			"text":"首页",
+			"iconPath":"static/tabar/home.png",
+			"selectedIconPath":"static/tabar/homeed.png"
+		},{
+			"pagePath":"pages/my/My",
+			"text":"我的",
+			"iconPath":"static/tabar/my.png",
+			"selectedIconPath":"static/tabar/myed.png"
+		}]
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "实测实量测试", //模式名称
+				"path": "pages/module_project/ActualMeasure/ActualMeasure", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			} 
+		]
+	}
+}
