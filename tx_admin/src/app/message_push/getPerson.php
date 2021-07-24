@@ -3,6 +3,7 @@
 	error_reporting(E_ALL ^ E_NOTICE);
 	header("Access-Control-Allow-Origin: *");
 	// 允许任意域名发起的跨域请求
+	date_default_timezone_set('PRC'); //东八时区 
 	$date = date("Y-m-d H:i:s");
 	$flag = isset($_POST["flag"]) ? $_POST["flag"] : '';
 	
