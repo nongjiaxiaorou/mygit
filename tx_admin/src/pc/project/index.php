@@ -39,8 +39,7 @@
 					$ret_data["data"][$i]["section"] = $row["section"];//区段
 					$ret_data["data"][$i]["architecture"] = $row["architecture"];//建筑面积
 					$ret_data["data"][$i]["proPosition"] = $row["proPosition"];
-//					$ret_data["data"][$i]["city"] = $row["city"];
-					
+					$ret_data["data"][$i]["projectId"] = $row["id"];					
 					$i++;
 				}
 				$ret_data["success"] = 'success';

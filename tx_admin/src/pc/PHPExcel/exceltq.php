@@ -103,50 +103,50 @@
 				}
 			}
 			unlink($fileName);//删除文件
+		break;
+		case 'saveProZone':
+			for ($row = 2; $row <= $rowCount; $row++) {
+				//列数循环 , 列数是以A列开始
+				for ($column = 'A'; $column <= $columnCount; $column++) {
+					// $dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
+					$array[$column . $row] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
+				}
+			}
+//			print_r($dataArr);
+			$projectName = $array["A" . 2];
+			$sql = "SELECT `timeStamp` from `tb_project_floor_information` WHERE `projectName` = '$projectName'";
+			$result = $conn->query($sql);
+			$row = $result->fetch_assoc();
+			$proTimeStamp = $row['timeStamp'];
+			for ($i = 2; $i <= $rowCount; $i++) {
+				$projectName = "A" . $i;
+				$projectName = $array[$projectName];
+				$section="B" . $i;
+				$section = $array[$section];
+				$category ="C" . $i;
+				$category = $array[$category];
+				$build = "D" . $i;
+				$build = $array[$build];
+				$unitNum = "E" . $i;
+				$unitNum= $array[$unitNum];
+				$unitName = "F" . $i;
+				$unitName= $array[$unitName];
+				$underGroundNumber = "G" . $i;
+				$underGroundNumber = $array[$underGroundNumber];
+				$aboveGroundNumber = "H" . $i;
+				$aboveGroundNumber = $array[$aboveGroundNumber];
+				if ($projectName == "") {
+					break;
+				} else {
+					$sql = "INSERT INTO `tb_project_floor_information` SET `timeStamp`='$proTimeStamp',`projectName`='$projectName',`section`='$section',`category`='$category',`build`='$build',`unitNum`='$unitNum',`unitName`='$unitName',`undergroundNumber`='$underGroundNumber',`abovegroundNumber`='$aboveGroundNumber'";
+					$result = $conn -> query($sql);
+					// $query = mysqli_query(self::$conn,$sql)or die(mysqli_error(self::$conn));
+					// mysqli_fetch_array($query);
+				}
+				// echo json_encode($section);
+				// echo $section;
+			}
+			unlink($fileName);//删除文件
 			break;
-			case 'saveProZone':
-				for ($row = 2; $row <= $rowCount; $row++) {
-					//列数循环 , 列数是以A列开始
-					for ($column = 'A'; $column <= $columnCount; $column++) {
-						// $dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
-						$array[$column . $row] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
-					}
-				}
-	//			print_r($dataArr);
-				$projectName = $array["A" . 2];
-				$sql = "SELECT `timeStamp` from `tb_project_floor_information` WHERE `projectName` = '$projectName'";
-				$result = $conn->query($sql);
-				$row = $result->fetch_assoc();
-				$proTimeStamp = $row['timeStamp'];
-				for ($i = 2; $i <= $rowCount; $i++) {
-					$projectName = "A" . $i;
-					$projectName = $array[$projectName];
-					$section="B" . $i;
-					$section = $array[$section];
-					$category ="C" . $i;
-					$category = $array[$category];
-					$build = "D" . $i;
-					$build = $array[$build];
-					$unitNum = "E" . $i;
-					$unitNum= $array[$unitNum];
-					$unitName = "F" . $i;
-					$unitName= $array[$unitName];
-					$underGroundNumber = "G" . $i;
-					$underGroundNumber = $array[$underGroundNumber];
-					$aboveGroundNumber = "H" . $i;
-					$aboveGroundNumber = $array[$aboveGroundNumber];
-					if ($projectName == "") {
-						break;
-					} else {
-						$sql = "INSERT INTO tb_project_floor_information SET `timeStamp`='$proTimeStamp',projectName='$projectName',section='$section',category='$category',build='$build',unitNum='$uintNum',unitName='$unitName',`undergroundNumber`='$underGroundNumber',`abovegroundNumber`='$aboveGroundNumber'";
-						$result = $conn -> query($sql);
-						// $query = mysqli_query(self::$conn,$sql)or die(mysqli_error(self::$conn));
-						// mysqli_fetch_array($query);
-					}
-					// echo json_encode($section);
-					// echo $section;
-				}
-				unlink($fileName);//删除文件
-				break;
 	}
 ?>

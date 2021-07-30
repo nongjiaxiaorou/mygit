@@ -1,11 +1,18 @@
 <template>
 	<view class="list">
-		<uni-section title="测点录入(长按类型进行录入)" type="line"></uni-section>
+		<uni-section :title="statusTitle" type="line" >
+			<button  type="primary" v-show="isIntoReTest"  @click="tapRetest">点击进行复测</button>
+			<button v-show="isIntoFinalTest" type="warn" @click="tapFinalTest">点击进行终测</button>
+		</uni-section>
 		<view class="uni-list">
+			<!-- <view class="">
+				{{isIntoReTest}}
+			</view> -->
 			<uni-collapse :accordion="true">
-				<view v-for="(item,index) in pointArr" :key="index">
-					<uni-collapse-item :title="item.measureType+' '+item.range" :qualifiedBadge="item.qualifiedBadge" :unQualifiedBadge="item.unQualifiedBadge" size="small" type="success" v-longpress="openModal(item.id,item)" :disabled="item.missItem=='true'?true:false">
-					    <view class="collapse-content" style="padding: 30rpx;">
+				<!-- <view v-for="(item,index) in pointArr" :key="item.id"  @click.middle ="pointStatus == '初测'? openModal(item.id,item) : pointStatus == '复测'? openModal1(item.id,item) : null " > -->
+				<view v-for="(item,index) in pointArr" :key="item.id"  @longtap = "pointStatus == '初测'? openModal(item.id,item) : pointStatus == '复测'? openModal1(item.id,item) : null " >
+					<uni-collapse-item-badge :title="item.measureType+' '+item.range" :qualifiedBadge="item.qualifiedBadge" :unQualifiedBadge="item.unQualifiedBadge" size="small" type="success" :disabled="item.missItem=='true'? true:false" >
+						<view class="collapse-content" style="padding: 30rpx;" >
 					        <t-table borderColor="#494F54">
 					        	<t-tr fontSize="12">
 									<t-th>编号</t-th>
@@ -15,9 +22,9 @@
 					        	</t-tr>
 					        	<t-tr v-if="item.children.length" v-for="(item1,index) in item.children" :key="index" fontSize="12">
 					        		<t-td>{{item1.number}}</t-td>
-					        		<t-td>{{item1.initTestVal}}</t-td>
-					        		<t-td>{{item1.retestVal}}</t-td>
-									<t-td>{{item1.finalTestVal}}</t-td>
+					        		<t-td :id="item1.initStatus=='合格'? 'font-green':'font-red'" >{{item1.initTestVal}}</t-td>
+					        		<t-td :id="item1.retestStatus=='合格'? 'font-green':'font-red'" >{{item1.retestVal}}</t-td>
+									<t-td :id="item1.finalStatus=='合格'? 'font-green':'font-red'" >{{item1.finalTestVal}}</t-td>
 					        	</t-tr>
 								<!-- <t-tr v-if="item.children.length==0" fontSize="12">
 									<t-td></t-td>
@@ -27,9 +34,49 @@
 								</t-tr> -->
 					        </t-table>
 					    </view>
-					</uni-collapse-item>
+					</uni-collapse-item-badge>
+					<!-- 初测新增测点 -->
 					<neil-modal v-show="show=='show'+item.id" @close="closeModal(item.id)" title="新增测点" @confirm="saveMeasurePoint" @reset="resetPointFunc(item)">
 					<!-- <neil-modal v-show="true" @close="closeModal(item.id)" title="新增测点"> -->
+					    <view class="input-view">
+							<scroll-view scroll-y="true" class="scroll-Y">
+								<view class="input-name">
+									<view>检查内容：</view>
+									<input type="text" :value="item.measureType" disabled="disabled"/>
+								</view>
+								<view class="input-name">
+									<view>编号类型：</view>
+									<input type="text" :value="item.number" disabled="disabled"/>
+								</view>
+								<view class="input-name">
+									<view>合格范围：</view>
+									<input type="text" :value="item.range" disabled="disabled"/>
+								</view>
+								<view class="input-name">
+									<view>测点总数：</view>
+									<input type="number" auto-blur="true" v-model="totalNum" placeholder="测点总数(必填)"/>
+								</view>
+								<view class="input-name">
+									<view>不合格数：</view>
+									<input type="number" auto-blur="true" v-model="unqualifiedNum" placeholder="不合格数量(必填)" @input="onChangeHandler($event,item)"/>
+								</view>
+								<view class="input-name" >
+									<view>缺项：</view>
+									<radio value="true" style="flex: 1;" @click="missItemFunc" :checked="missItem" />
+								</view>
+								<view class="scroll-style">
+									<!-- <scroll-view scroll-y="true" class="scroll-Y"> -->
+										<view class="input-name" v-for="(item,index) in unQualifiedArr" :key="index">									
+											<view class="num">{{item.number}}：</view>
+											<input type="number" auto-blur="true" v-model="item.value" :id="item.isCorrect=='true'?'font-red':'font-green'" placeholder="请输入不合格值" @input="unQualifiedChange($event,item)"/>
+										</view>
+									<!-- </scroll-view> -->
+								</view>
+							</scroll-view>
+					    </view>
+					</neil-modal>
+					<!-- 复测新增测点 -->
+					<neil-modal v-show="show=='show1'+item.id" ref="reTestModal" @close="closeModal(item.id)" title="修改复测值" @confirm="saveMeasureRetestPoint(item.children)" >
 					    <view class="input-view">
 					        <view class="input-name">
 					            <view>检查内容：</view>
@@ -40,22 +87,14 @@
 							    <input type="text" :value="item.number" disabled="disabled"/>
 							</view>
 							<view class="input-name">
-							    <view>测点总数：</view>
-							    <input type="text" v-model="totalNum" placeholder="测点总数(必填)"/>
-							</view>
-							<view class="input-name">
-							    <view>不合格数：</view>
-							    <input type="text" v-model="unqualifiedNum" placeholder="不合格数量(必填)" @input="onChangeHandler($event,item)"/>
-							</view>
-							<view class="input-name">
-								<view>缺项：</view>
-								<radio value="r1" style="flex: 1;" @click="missItemFunc" :checked="missItem" />
-							</view>
-							<view class="scroll-style">
-								<scroll-view scroll-y="true" class="scroll-Y">
-									<view class="input-name" v-for="(item,index) in unQualifiedArr" :key="index">
-									    <view class="num">{{item.number}}：</view>
-									    <input type="text" v-model="item.value" :class="item.isCorrect=='true'?'font-green':'font-red'" placeholder="请输入不合格值" @input="unQualifiedChange($event,item)"/>
+							    <view>合格范围：</view>
+							    <input type="text" :value="item.range" disabled="disabled"/>
+							</view> 
+							<view class="scroll-style" >
+								<scroll-view scroll-y="true" class="scroll-Y" scroll-with-animation="true" show-scrollbar="true">
+									<view class="input-name" v-for="(item3,index3) in item.children" :key="index3">
+										<view class="num">{{item3.number}}：</view>
+										<input type="number" auto-blur="true" v-model="item3.retestVal" :id="item3.status=='合格'?'font-green':'font-red'" placeholder="测点复测值" @input="unQualifiedChange1($event,item3)"/>
 									</view>
 								</scroll-view>
 							</view>
@@ -70,28 +109,33 @@
 
 <script>
 	import uniCollapse from '@/components/uni-app/uni-collapse/uni-collapse.vue'
-	import uniCollapseItem from '@/components/uni-app/uni-collapse-item/uni-collapse-item.vue'
+	import uniCollapseItemBadge from '@/components/uni-app/uni-collapse-item/uni-collapse-item-badge.vue'
 	import neilModal from '@/components/common/neil-modal/neil-modal.vue'
 	import tTable from '@/components/common/t-table/t-table.vue'
 	import tTh from '@/components/common/t-table/t-th.vue'
 	import tTr from '@/components/common/t-table/t-tr.vue'
 	import tTd from '@/components/common/t-table/t-td.vue'
+	import uniBadge from '@/components/uni-app/uni-badge/uni-badge.vue';
 	export default {
 		components: {
 			uniCollapse,
-			uniCollapseItem,
+			uniCollapseItemBadge,
 			neilModal,
 			tTable,
 			tTh,
 			tTr,
-			tTd
+			tTd,
+			uniBadge,
 		},
 		data() {
 			return {
+				statusTitle: '长按类型可进行测点录入',
 				show: '',
 				isOpened: 'none',
 				swipeList: [],
 				unQualifiedArr: [],
+				initTestArr: [],
+				reTestArr: [], 
 				currentData: [],
 				cardParam: [],
 				projectId: '',
@@ -103,7 +147,8 @@
 				range: '',
 				preventTwice: 0,
 				pointArr: [],
-				missItem: false
+				missItem: false,
+				
 			};
 		},
 		onReady() {
@@ -156,25 +201,176 @@
 					}
 				]
 			}, 1000);
+			
 		},
 		onLoad(option) {
 			this.currentData = JSON.parse(option.currentData)
 			this.cardParam = JSON.parse(option.cardParam)
 			this.projectId = JSON.parse(option.projectId)
 			this.getPointStatus()
+			
+		},
+		computed: {
+			isIntoReTest () {
+				if (this.pointStatus == '初测') {
+					let missItemNum = 0;
+					let flag = Boolean;
+					for (let i=0; i<this.pointArr.length; i++) {
+						if (this.pointArr[i].missItem == null || this.pointArr[i].missItem == 'false') {
+							if (this.pointArr[i].children.length == 0 ) {
+								flag = false;
+								return flag
+							} 
+						} else {
+							missItemNum++
+						}
+						if (missItemNum == this.pointArr.length && this.pointArr[i].missItem == 'true') {
+							uni.showToast({
+								icon: 'none',
+								position: 'center',
+								title: '全部缺项不需进行复测和终测',
+								duration:2000
+							});
+							console.log(111)
+							flag = false
+							return flag
+						}
+					}
+					if (flag == true ) {
+						uni.showToast({
+							icon: 'none',
+							position: 'center',
+							title: '已完成初测, 可点击右上角按钮进行复测',
+							duration:2000
+						});
+					}
+					return flag
+					
+				} else {
+					return false
+				}
+				
+			},
+			isIntoFinalTest () {
+				if(this.pointStatus == '复测' ) {
+					uni.showToast({
+						icon: 'none',
+						position: 'bottom',
+						title: '已进入复测状态.可点击右上角的按钮进行终测',
+						duration:1500,
+					})
+					return true
+				}
+			}
 		},
 		methods: { 
+			// 复测按钮函数
+			tapRetest () {
+				const that = this
+				let opts = {
+					url: this.api+'/module_project/ActualMeasure/MeasurePoint.php',
+					method: 'POST'
+				}
+				let param = {
+					flag: 'intoReTest',
+					measureId:this.cardParam.id,
+					projectId: this.projectId,
+					pointArr: JSON.stringify(this.pointArr)
+				}
+				let isLoading = false//是否需要加载动画
+				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					if(res.data.code1){
+						console.log(res.data)
+						that.pointStatus = '复测'
+						that.statusTitle = '长按类型可进行测点值修改'
+						that.isIntoReTest = false
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '已进入复测状态!'
+						});
+						this.getMeasureType()
+					}else{
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '请更换到网络良好的环境删除！'
+						});
+						this.getMeasureType()
+					}
+					uni.hideLoading()//隐藏加载中转圈圈
+					that.isloading = false//取消遮罩层
+				}, error => {
+					console.log(error);
+				})
+				
+			},
+			
+			tapFinalTest () {
+				const that = this
+				let opts = {
+					url: this.api+'/module_project/ActualMeasure/MeasurePoint.php',
+					method: 'POST'
+				}
+				let param = {
+					flag: 'finalTest',
+					measureId:this.cardParam.id,
+					projectId: this.projectId,
+					pointArr: JSON.stringify(this.pointArr)
+				}
+				let isLoading = true//是否需要加载动画
+				that.pointStatus = '终测'
+				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					if(res.data.code1){
+						console.log(res.data)
+						// that.isIntoReTest = false
+						that.statusTitle = '终测状态无法录入测点'
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '已完成实测实量!'
+						});
+						this.getMeasureType()	
+					}else{
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '请更换到网络良好的环境删除！'
+						});
+						this.getMeasureType()	
+					}
+					uni.hideLoading()//隐藏加载中转圈圈
+					that.isloading = false//取消遮罩层
+				}, error => {
+					console.log(error);
+				})		
+			},
 			openModal(type,item) {
 				console.log(item)
 				this.measureType = item.measureType
 				this.number = item.number
 				this.range = item.range
-			    this.show = 'show'+type
-				this.unQualifiedArr = []
-				this.qualifiedNum = ''
-				this.unqualifiedNum = ''
-				this.totalNum = ''
+				this.show='show'+type
 				this.missItem = false
+				console.log(this.pointStatus)
+			},
+			openModal1(type,item) {						
+				let that = this
+				console.log(item)
+				let reTestModal = this.$refs.reTestModal[0]
+				reTestModal.changeIsShow();
+				console.log(reTestModal)
+				this.measureType = item.measureType
+				this.number = item.number
+				this.range = item.range
+				this.show = 'show1'+type
+				uni.getStorage({
+					key: 'initTestArr',
+					success: function(res) {
+						console.log(res)
+						that.reTestArr = res.data
+					}
+				})
 			},
 			closeModal(type) {
 			    this.show = ''
@@ -207,15 +403,16 @@
 				let param = {
 					flag: 'getMeasureType',
 					inspectItem: JSON.stringify(this.cardParam.inspectItem),
-					pointStatus: this.pointStatus,
-					projectId: this.projectId,
-					measureId:this.cardParam.id
+					pointStatus: that.pointStatus,
+					projectId: that.projectId,
+					measureId:that.cardParam.id
 				} 
+				console.log(that.pointStatus)
 				let isLoading = false//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					console.log(res.data)
 					if(res.data.code){
 						this.pointArr = res.data.data
+						console.log(this.pointArr)
 					}else{
 						uni.showToast({
 							icon: 'none',
@@ -241,6 +438,7 @@
 					measureId:this.cardParam.id,
 					projectId: this.projectId
 				} 
+				console.log(that.pointStatus)
 				let isLoading = false//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					console.log(res.data)
@@ -252,13 +450,22 @@
 							position: 'bottom',
 							title: '当前为'+res.data.data[0].status+'状态！'
 						});
+						if (this.pointStatus == '初测') {
+							this.statusTitle = '长按类型可进行测点录入'
+						}
+						if (this.pointStatus == '复测') {
+							this.statusTitle = '长按类型可进行测点值修改'
+						}
+						if (this.pointStatus == '终测') {
+							this.statusTitle = '终测状态无法录入测点'
+						}
 						this.getMeasureType()
 					}else{
 						this.pointStatus = '初测'
 						uni.showToast({
 							icon: 'none',
 							position: 'bottom',
-							title: '当前为初测状态！'
+							title: '当前为初测状态!'
 						});
 						this.getMeasureType()
 					}
@@ -270,6 +477,7 @@
 				})
 			},
 			saveMeasurePoint() {
+				console.log(222)
 				let unQualifiedStr = JSON.stringify(this.unQualifiedArr)
 				if(unQualifiedStr.indexOf('false') >= 0){
 					uni.showToast({
@@ -294,6 +502,7 @@
 						number: this.number,
 						missItem: this.missItem
 					} 
+					// console.log(param)
 					let isLoading = true//是否需要加载动画
 					this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 						console.log(res.data)
@@ -311,32 +520,111 @@
 							});
 						}
 						this.getMeasureType()
+						// console.log(this.pointArr)
 						uni.hideLoading()//隐藏加载中转圈圈
 						that.isloading = false//取消遮罩层
 					}, error => {
 						console.log(error);
 					})
 				}
-				
+				this.initTestArr.push({
+					measureType: this.measureType,
+					pointStatus: this.pointStatus,
+					number: this.number,
+					unQualifiedInfo:this.unQualifiedArr
+				})
+				uni.setStorage({
+					key:'initTestArr',
+					data: this.initTestArr
+				})
+				this.unQualifiedArr = []
+				this.qualifiedNum = ''
+				this.unqualifiedNum = ''
+				this.totalNum = ''
+				console.log(this.initTestArr)
+			},
+			saveMeasureRetestPoint(item) {
+				console.log(item)
+				let that = this
+				// itemRange.s
+				let opts = {
+					url: this.api+'/module_project/ActualMeasure/MeasurePoint.php',
+					method: 'POST' 
+				}
+				let param = {
+					flag: 'saveMeasureRetestPoint',
+					measureId:this.cardParam.id,
+					projectId: this.projectId,
+					allQualifiedInfo: JSON.stringify(item),
+					measureType: this.measureType,
+				} 
+				// console.log(param)
+				let isLoading = true//是否需要加载动画
+				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					console.log(res.data)
+					if(res.data.code){
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '已保存测点信息！'
+						});
+						
+					}else{
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '请更换到网络良好的环境删除！'
+						});
+					}
+					uni.$emit('changeStatus',{
+						point: 'item'
+					})
+					this.getMeasureType()
+					// console.log(this.pointArr)
+					uni.hideLoading()//隐藏加载中转圈圈
+					that.isloading = false//取消遮罩层
+				}, error => {
+					console.log(error);
+				})
+				if (this.isIntoFinalTest == true) {
+					uni.showToast({
+						icon: 'none',
+						position: 'center',
+						title: '已完成复测, 可点击右上角按钮进行终测',
+						duration:1500
+					});
+				}
+				// this.isCorrect = 'false'
 			},
 			//不合格值改变时触发判断不合格值是否在区间内
-			unQualifiedChange(e,item) {
+			unQualifiedChange1(e,item) {
 				// if(this.preventTwice){
-					// console.log(this.preventTwice)
+					console.log(item.status)
 					// this.preventTwice = 0
 					let Arr = this.range.substr(1, this.range.length-2).split(',')
-					if(item.value<parseInt(Arr[0])||item.value>parseInt(Arr[1])){
-						item.isCorrect = 'true'
+					if(item.retestVal >= parseInt(Arr[0]) && item.retestVal <= parseInt(Arr[1])){
+						item.status = '合格'
+						
 					}else{
-						item.isCorrect = 'false'
+						item.status = '不合格'
 					}
 					// return
 				// }
 				// this.preventTwice++
 			},
+			//不合格值改变时触发判断不合格值是否在区间内
+			unQualifiedChange(e,item) {
+				let Arr = this.range.substr(1, this.range.length-2).split(',')
+				if(item.value <parseInt(Arr[0]) || item.value> parseInt(Arr[1])){
+					item.isCorrect = 'true'
+				}else{
+					item.isCorrect = 'false'
+				}
+			},
 			//重置测点
 			resetPointFunc(item) {
 				let that = this
+				that.show = item.id
 				uni.showModal({
 				    title: '重置测点',
 				    content: '请确认是否重置测点数据，重置后需重新录入！',
@@ -354,7 +642,7 @@
 				            } 
 				            let isLoading = true//是否需要加载动画
 				            that.myRequest.httpRequest (opts, param,isLoading).then(res => {
-				            	// console.log(res.data)
+				            	console.log(res.data)
 				            	if(res.data.code){
 				            		uni.showToast({
 				            			icon: 'none',
@@ -376,16 +664,28 @@
 				            	console.log(error);
 				            })
 				        } else if (res.cancel) {
+							that.show = 'show' + item.id
 				            console.log('用户点击取消');
 				        }
 				    }
 				});
 			},
+			// resetPointFunc1 (item) {
+			// 	console.log(item)
+			// 	uni.showToast({
+			// 		icon: 'none',
+			// 		position: 'bottom',
+			// 		title: '复测状态无法重置'
+			// 	});
+			// },
 			// 设置测点类型为缺项
 			missItemFunc() {
-				this.missItem = !this.missItem
-			}
-		}
+				const that = this;
+				that.missItem = !that.missItem;
+				// console.log(that.missItem);
+			},
+		},
+
 	};
 </script>
 
@@ -456,7 +756,7 @@
 	}
 	
 	.scroll-Y {
-		height: 100px;
+		height: 100%;
 	}
 	
 	.scroll-style {
@@ -468,13 +768,14 @@
 		text-align: right;
 	}
 	
-	.font-green {
+	#font-green {
 		color: green;
 	}
 	
-	.font-red {
+	#font-red {
 		color: red;
 	}
+	
 	
 	uni-modal{
 			z-index: 19999 !important;

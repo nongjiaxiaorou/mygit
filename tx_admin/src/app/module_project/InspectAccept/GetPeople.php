@@ -4,6 +4,7 @@
 	header("Access-Control-Allow-Origin: *");
 	// 允许任意域名发起的跨域请求
 	$flag = isset($_POST["flag"]) ? $_POST["flag"] : '';
+	date_default_timezone_set('PRC'); //东八时区 
 	$data = array(
 		"code"=>1,
 		"msg"=>"",

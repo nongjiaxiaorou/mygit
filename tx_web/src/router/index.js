@@ -179,6 +179,12 @@ export default new Router({
 					component: resolve =>require(['@/components/page/datacheck/ConcreteDetail.vue'],resolve),
 				    meta: { title: '混凝土专项管理详情' }
 				},
+				{
+					path: '/ProStaticsDetail',
+					name: 'ProStaticsDetail',
+					component: resolve =>require(['@/components/page/project/projectStatistics/ProStaticsDetail'],resolve),
+				    meta: { title: '统计详情' }
+				},
                 /** 系统管理 **/
                 {
                     path: '/user',

@@ -1,19 +1,27 @@
 <template>
 	<view>
 		<uni-list>
-		    <uni-list-item  title="检查项目:混凝土结构工程" ></uni-list-item>
-		    <uni-list-item  title="检查人员:某某某" ></uni-list-item>
+		    <uni-list-item  :title="'检查项目:' + cardParam.inspectItem" ></uni-list-item>
+		    <uni-list-item  :title="'检查人员:' + cardParam.inspectPerson" ></uni-list-item>
 		</uni-list>
 		<view style="text-align: center;padding-top: 15px;">
 			<view id="budian" style="width: 100%;">
 				<view>
-					<image class="Pic" mode="scaleToFill" :src="src"></image>
+					<image class="Pic" mode="scaleToFill" :src="measureSrc"></image>
 				</view>
 					
 				<view>
-					<button style="width: 300px;height: 40px;background-color: #00BFFF;" @click="toPointSetting">实测布点</button>
+					<button style="width: 300px;height: 40px;background-color: #00BFFF; font-size: 28rpx; " @click="toPointSetting"><h3>实测布点</h3></button>
 				</view>
 					
+			</view>
+		</view>
+		<view class="handDrawFather">
+			<view class="">
+				<h3 style="font-size: 30rpx;">手绘布点</h3>
+			</view>
+			<view class="">
+				<image :src="handDrawSrc" mode=""></image>
 			</view>
 		</view>
 	</view> 
@@ -29,27 +37,169 @@
 		},
 		data() {
 			return {
-				src: 'https://vkceyugu.cdn.bspapp.com/VKCEYUGU-uni-app-doc/6acec660-4f31-11eb-a16f-5b3e54966275.jpg',
+				measureSrc: '../../../static/images/null.jpg',  // 实测布点图
+				handDrawSrc: '../../../static/images/null.jpg', // 手绘布点图
 				currentData: '',
 				cardParam: '',
-				projectId: ''
+				projectId: '',
+				proTimeStamp: '',
+				section: '',
+				buildNum: '',
+				floor: '',
+				unit: '',
+				buildSelData: {},
+				pointStatus: '',
 			};
 		},
 		onReady() {
+			const that = this
+			// uni.getStorage({
+			// 	key: 'buildInfo',
+			// 	success: function(res) {
+			// 		that.buildSelData = res.data
+			// 		that.buildNum = res.data.build
+			// 		that.floor = res.data.floor
+			// 		that.section = res.data.section			
+			// 	}
+			// })
+			const result = uni.getStorageSync ('buildInfo');
+			console.log(result)
+			if (result) {
+				that.buildSelData = result
+				that.section = result.section
+				that.buildNum = result.build
+				that.floor = result.floor
+				that.unit = result.unit
+			}
+			const result1 = uni.getStorageSync ('userInfo');
+			if (result) {
+				that.proTimeStamp = result1.proTimeStamp
+			}
+			// uni.getStorage({
+			// 	key: 'userInfo',
+			// 	success: function(res) {
+			// 		that.proTimeStamp = res.data.proTimeStamp
+			// 	}
+			// })
+			// console.log(that.proTimeStamp)
+			// setTimeout(function(){
+			// 	that.getPointStatus()
+			// },1000)
+			that.getFloorPic ();
+			that.getHandDrawPic ();
+			// console.log(this.buildSelData)
+			// console.log(this.floor)
+			// console.log(this.section)
 		},
 		onLoad(option) {
 			this.currentData = JSON.parse(option.currentData)
 			this.cardParam = JSON.parse(option.cardParam)
+			console.log(this.currentData)
+			console.log(this.cardParam)
 			this.projectId = option.projectId
 		},
 		methods: {
 			toPointSetting() {
 				let currentStr = JSON.stringify(this.currentData)
 				let cardParamStr = JSON.stringify(this.cardParam)
-				uni.navigateTo({
-					url:`PointSetting?currentData=${cardParamStr}`+`&projectId=${this.projectId}`+`&cardParam=${cardParamStr}`
+				uni.setStorage({
+					key:'cardParam',
+					data: this.cardParam,					
 				})
-			}
+				uni.setStorage({
+					key: 'PicSrc',
+					data: this.measureSrc
+				})
+				uni.navigateTo({
+					url:`PointSetting?currentData=${cardParamStr}`+`&projectId=${this.projectId}`+`&cardParam=${cardParamStr}` +`&measureSrc=${this.measureSrc}`
+				})
+			},
+			getFloorPic () {
+				let that = this
+				let opts = {
+					url: this.api+'/module_project/SelectBuildInfo.php',
+					method: 'POST' 
+				}
+				let param = {
+					flag: 'getFloorPic',
+					proTimeStamp: that.proTimeStamp,
+					section: that.section,
+					buildNum: that.buildNum,
+					floor: that.floor
+				} 
+				console.log(param)
+				let isLoading = false//是否需要加载动画
+				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					console.log(res.data)
+					that.measureSrc = that.imageUrl_pc + '/floorPic/' + res.data.floorPicName
+					// that.isloading = false//取消遮罩层
+				}, error => {
+					console.log(error);
+				})									
+			},
+			getHandDrawPic () {
+				const that = this;
+				const opts = {
+					url: that.api + '/module_project/SelectBuildInfo.php',
+					method: 'POST'
+				}
+				const param = {
+					flag: 'getHandDrawPic',
+					proTimeStamp: that.proTimeStamp,
+					inspectPosition:that.section + that.buildNum +that.floor + that.unit,
+					inspectItem: that.cardParam.inspectItem,
+					
+				}
+				let isLoading = false;
+				that.myRequest.httpRequest (opts , param , isLoading).then (res => {
+					console.log(res.data)
+					if (res.data.code) {
+						that.handDrawSrc = that.imageUrl_pc + '/handDrawPic/' + res.data.handDeawPic;
+					} else {}
+				}) , error => {
+					console.log(error);
+				}
+			},
+			getPointStatus() {
+				let that = this
+				let opts = {
+					url: this.api+'/module_project/ActualMeasure/MeasurePoint.php',
+					method: 'POST'
+				}
+				let param = {
+					flag: 'getPointStatus',
+					measureId:this.cardParam.id,
+					projectId: this.currentData.projectId
+				} 
+				console.log(that.pointStatus)
+				let isLoading = false//是否需要加载动画
+				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					console.log(res.data)
+					if(res.data.code){
+						this.pointStatus = res.data.data[0].status
+						that.getHandDrawPic ();
+						console.log(res.data.data[0].status)
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '当前为'+res.data.data[0].status+'状态！'
+						});
+					}else{
+						this.pointStatus = '初测'
+						uni.showToast({
+							icon: 'none',
+							position: 'bottom',
+							title: '当前为初测状态!'
+						});
+						that.getHandDrawPic ();
+					}
+					
+					uni.hideLoading()//隐藏加载中转圈圈
+					that.isloading = false//取消遮罩层
+				}, error => {
+					console.log(error);
+				})
+			},
 		}
 	};
 </script>
@@ -75,5 +225,11 @@
 		width: 300px;
 		height: 200px;
 		background-color: #eeeeee;
+	}
+	.handDrawFather {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

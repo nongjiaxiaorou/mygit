@@ -239,6 +239,18 @@
 		    
 		}
 		,{
+		    "path" : "pages/module_project/InspectAccept/ViolationInvestigation",
+		    "style" :                 
+		    {
+		        "navigationBarTitleText": "项目检查详情",
+		        "enablePullDownRefresh": false,
+				"app-plus":{
+					"titleNView":false
+				}	
+		    }
+		    
+		}
+		,{
 		    "path" : "pages/module_project/InspectAccept/AddItemInspect",
 		    "style" :                                                                                    
 		    {
@@ -246,55 +258,98 @@
 		        "enablePullDownRefresh": false
 		    }
 		    
-		},
-		{
-				    "path" : "pages/module_project/ActualMeasure/ActualMeasure",
-				    "style" : {
-				    	"navigationBarTitleText": "实测实量",
-						"app-plus":{
-							"titleNView":{ 
-							  "buttons":[ 
-								   {
-										"float":"right",
-										"type":"menu"
-								   }
-								]
-							}
-						}
-				    }
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/SelectDescribe",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/CheckDetail",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/CheckDetailPic",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false
+		    }
+		    
+		}
+		,{
+		    "path" : "pages/module_project/InspectAccept/ViolationContent",
+		    "style" :                                                                                    
+		    {
+		        "navigationBarTitleText": "项目检查",
+		        "enablePullDownRefresh": false
+		    }		    
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/ActualMeasure",
+			"style" : {
+				"navigationBarTitleText": "实测实量",
+				"app-plus":{
+					"titleNView":{ 
+					  "buttons":[ 
+						   {
+								"float":"right",
+								"type": "menu"
+						   }
+						]
+					}
 				}
-				,{
-				    "path" : "pages/module_project/ActualMeasure/AddActualMeasure",
-				    "style" :
-				    {
-				        "navigationBarTitleText": "实测实量",
-				        "enablePullDownRefresh": false
-				    }
-				}
-				,{
-				    "path" : "pages/module_project/ActualMeasure/MeasurePoint",
-				    "style" :
-				    {
-				        "navigationBarTitleText": "实测实量",
-				        "enablePullDownRefresh": false
-				    }
-				}
-				,{
-				    "path" : "pages/module_project/ActualMeasure/PointArrange",
-				    "style" :
-				    {
-				        "navigationBarTitleText": "实测实量",
-				        "enablePullDownRefresh": false
-				    }
-				}
-				,{
-				    "path" : "pages/module_project/ActualMeasure/PointSetting",
-				    "style" :
-				    {
-				        "navigationBarTitleText": "实测实量",
-				        "enablePullDownRefresh": false
-				    }
-				}
+			}
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/AddActualMeasure",
+			"style" :
+			{
+				"navigationBarTitleText": "实测实量",
+				"enablePullDownRefresh": false
+			}
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/MeasurePoint",
+			"style" :
+			{
+				"navigationBarTitleText": "实测实量",
+				"enablePullDownRefresh": false
+			}
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/StatisticsAnalysis",
+			"style" :
+			{
+				"navigationBarTitleText": "实测实量",
+				"enablePullDownRefresh": false
+			}
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/PointArrange",
+			"style" :
+			{
+				"navigationBarTitleText": "测点布置",
+				"enablePullDownRefresh": false
+			}
+		}
+		,{
+			"path" : "pages/module_project/ActualMeasure/PointSetting",
+			"style" :
+			{
+				"navigationBarTitleText": "测点布置",
+				"enablePullDownRefresh": false
+			}
+		}
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

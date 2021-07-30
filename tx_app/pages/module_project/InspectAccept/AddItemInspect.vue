@@ -150,6 +150,7 @@ export default {
 		},
 		//获取施工日期
 		getEndDate(val){
+			// console.log(val)
 			this.formData.endDate = val
 		},
 		 //产生随机数函数
@@ -217,6 +218,7 @@ export default {
 				key: 'buildInfo',
 				success: function (res) {
 					that.buildSelData = res.data
+					// console.log(res.data)
 				}
 			});
 			uni.getStorage({
@@ -239,12 +241,13 @@ export default {
 				.catch(error => {
 					console.error(error)
 				})
-				console.log(this.formData.itemList[i].picPath)
+				// console.log(this.formData.itemList[i].picPath)
 			}
 		},
 		//保存卡片信息
 		saveCardDataFunc() {
-			console.log(111111)
+			const that = this;
+			// console.log(that.buildSelData)
 			var arr = []
 			for(var i=0;i<this.formData.inspectContent.length;i++){
 				arr[i] = this.formData.inspectContent[i].split('.')[0]
@@ -257,6 +260,7 @@ export default {
 				flag: "saveViolationPic",
 				imageList: JSON.stringify(this.imageList),
 				formData: JSON.stringify(this.formData),
+				buildInfo: JSON.stringify(that.buildSelData),
 				projectId: this.projectInfo.projectId,
 				measureId: this.cardParam.id,
 				number: arr.join('||')

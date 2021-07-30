@@ -8,6 +8,7 @@
 		"msg"=>"",
 		"data"=>[]
 	);
+	date_default_timezone_set('PRC'); //东八时区 
 	//生成时间戳
 	function msectime() {
    		list($msec, $sec) = explode(' ', microtime());
@@ -17,11 +18,13 @@
 		//保存通知单以及图片
 		case 'saveViolationPic':
 			$formData = isset($_POST["formData"]) ? $_POST["formData"] : '';
+			$buildInfo = isset($_POST["buildInfo"]) ? $_POST["buildInfo"] : '';
 			$projectId = isset($_POST["projectId"]) ? $_POST["projectId"] : '';
 			$measureId = isset($_POST["measureId"]) ? $_POST["measureId"] : '';
 			$measureId = isset($_POST["measureId"]) ? $_POST["measureId"] : '';
 			$number = isset($_POST["number"]) ? $_POST["number"] : '';
 			$formData = json_decode($formData);
+			$buildInfo = json_decode($buildInfo);
 			$timeStamp = msectime();
 			$noticeNumber = $formData->noticeNumber;
 			$inspectLevel = $formData->inspectLevel;
@@ -41,8 +44,10 @@
 					$img_path='../../../images/app_pic/inspectPic/';
 					
 					$arr = [];
-					$now_time= time();
-					$now_date= date('Y-m-d H:i:s',$now_time);
+					$now_time = time();
+					$now_date = date('Y-m-d H:i:s',$now_time);
+					$end_time = date('Y-m-d H:i:s',strtotime("+3 day"));
+					$buildInfo = $buildInfo->section . "||" . $buildInfo->build;
 					$i=0;
 					foreach($itemList as $key=>$val){
 						$base = $val->picPath;
@@ -54,7 +59,8 @@
 						$type = $val->title;
 						$number = $val->number;
 						$itemDescribe = $val->itemDescribe;
-						$sql2 = "INSERT INTO `tb_inspectaccept_violationitem` SET `projectId`='$projectId',`noticeTimeStamp`='$timeStamp',`itemType`='$type',`violationContent`='$itemDescribe',`picFile`='$images_name',`uploadDate`='$now_date',`createTime`='$now_date',`number`='$number'";
+						$sql2 = "INSERT INTO `tb_inspectaccept_violationitem` SET `projectId`='$projectId',`noticeTimeStamp`='$timeStamp',`itemType`='$type',`violationContent`='$itemDescribe',`picFile`='$images_name',`uploadDate`='$now_date',`createTime`='$now_date',`endDate`='$end_time',`number`='$number',`buildInfo`='$buildInfo'";
+						$data['sql2'] = $sql2;
 						$i++;
 					    $result2 = $conn->query($sql2);
 					}

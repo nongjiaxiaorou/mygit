@@ -41,6 +41,37 @@
 				}
 			}
 		break;
+		case 'getFloorPic':
+			$proTimeStamp = isset($_POST["proTimeStamp"]) ? $_POST["proTimeStamp"] : '';
+			$section = isset($_POST["section"]) ? $_POST["section"] : '';
+			$buildNum = isset($_POST["buildNum"]) ? $_POST["buildNum"] : '';
+			$floor = isset($_POST["floor"]) ? $_POST["floor"] : '';
+			
+			
+			$sql = "SELECT * FROM tb_project_floor_pic WHERE `proTimestamp` = '$proTimeStamp' AND `section` = '$section' AND `build` = '$buildNum' AND  `floor` = '$floor' ";
+			// $result_today = mysql_query($sql_today, $this->mysql->conn) or die("Invalid query: " . mysql_error() . $sql);  // sql报错信息
+			// echo $result_today;	
+			// echo $sql;
+			$result = $conn->query($sql);
+			$row = $result->fetch_assoc();
+			$ret_data['floorPicName'] = $row['picName'];
+		break;
+		case 'getHandDrawPic':
+			$proTimeStamp = isset($_POST["proTimeStamp"]) ? $_POST["proTimeStamp"] : '';
+			$inspectPosition = isset($_POST["inspectPosition"]) ? $_POST["inspectPosition"] : '';	
+			$inspectItem = isset($_POST["inspectItem"]) ? $_POST["inspectItem"] : '';	
+			$sql = "SELECT `manualPrimaryPic` FROM `tb_inspectaccept_measure` WHERE `proTimestamp` = '$proTimeStamp' AND `inspectPosition` = '$inspectPosition' AND `inspectItem` = '$inspectItem'";
+			$result = $conn->query($sql);
+			if ($result) {
+				$row = $result->fetch_assoc();
+				$handDeawPic = $row['manualPrimaryPic'];
+				$ret_data['code'] = 1;
+				$ret_data['handDeawPic'] = $handDeawPic;
+			} else {
+				$ret_data['code'] = 0;
+			}
+			
+		break;
 	}
 	$conn -> close();
 	$json = json_encode($ret_data);

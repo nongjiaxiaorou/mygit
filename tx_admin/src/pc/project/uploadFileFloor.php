@@ -14,7 +14,7 @@
 $allowedExts = array("gif","jpeg", "jpg", "png","bmp","wmf");
 $temp = explode(".", $_FILES["file"]["name"]);
 $extension1 = end($temp);     // 获取文件后缀名
-$extension=strtolower($extension1);
+$extension=strtolower($extension1); // 把字符串转换为小写
 
 
 function numToWord($num){	

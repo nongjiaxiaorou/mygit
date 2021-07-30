@@ -1,9 +1,9 @@
 <template>
     <view class="neil-modal" @touchmove.stop.prevent="bindTouchmove" :class="{'neil-modal--show':isOpen}">
         <view class="neil-modal__mask" @click="clickMask"></view>
-        <view class="neil-modal__container">
+        <view :class="{'neil-modal__container':true, 'changeWidth':isWidth}" >
 			<view class="title-box">
-				<uni-icons class="icon-style" type="loop" size="25" @click="resetPoint"/>
+				<uni-icons v-show="isShow" class="icon-style" type="loop" size="25" @click="resetPoint"/>
 				<view class="neil-modal__header" v-if="title.length > 0">{{title}}</view>
 			</view>
             <view class="neil-modal__content" :class="content ? 'neil-modal--padding' : ''" :style="{textAlign:align}">
@@ -68,11 +68,16 @@
             autoClose: { //点击遮罩是否自动关闭弹窗
                 type: [Boolean, String],
                 default: true
-            }
+            },
+			isWidth: { //是否改变宽度
+			    type: [Boolean, String],
+			    default: false
+			},
         },
         data() {
             return {
-                isOpen: true
+                isOpen: true,
+				isShow: true
             }
         },
         watch: {
@@ -84,6 +89,9 @@
         	this.isOpen = this.show
         },
         methods: {
+			changeIsShow() {
+				this.isShow = false;
+			},
             bindTouchmove() {},
             clickLeft() {
                 setTimeout(() => {
@@ -261,7 +269,9 @@
 			}
 		}
     }
-	
+	.changeWidth {
+		width: 600rpx;
+	}
 	.title-box{
 		display: flex;
 		border-bottom: 1px solid #e5e5e5;

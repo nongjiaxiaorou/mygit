@@ -36,7 +36,7 @@
 									<button @click="toPointArrange(item)" type="primary" class="button_style">测点布置</button>
 								</view>
 								<view>
-									<button @click="toItemAccept(item)" type="primary" class="button_style">统计分析</button>
+									<button @click="toItemAnalysis(item)" type="primary" class="button_style">统计分析</button>
 								</view>
 							</view>
 						</view>
@@ -72,7 +72,7 @@
 									<button @click="toPointArrange(item)" class="button_custom1" type="primary">测点布置</button>
 								</view>
 								<view>
-									<button class="button_custom1" type="primary">统计分析</button>
+									<button @click="toItemAnalysis(item)" class="button_custom1" type="primary">统计分析</button>
 								</view>
 							</view>
 						</view>
@@ -206,11 +206,12 @@
 			},
 			trigger(e) {
 				// console.log(e)
+				const that = this
 				let indexOf = e.index
 				if(indexOf==0){ //新建
 					//跳转到新增页面
 					uni.navigateTo({
-						url:`AddActualMeasure?currentData=${this.currentData}`
+						url:`AddActualMeasure?currentData=${that.currentData}&incompleteCardList=${JSON.stringify(that.incompleteCardList)}`
 					})
 				}else if(indexOf==1){ //下发
 					this.incompleteCardList.forEach(item => {
@@ -371,6 +372,7 @@
 			// 关闭窗口
 			closeDrawer(e) {
 				let that = this
+				// console.log(e)
 				// console.log(this.selDataFromChild)
 				if(this.selDataFromChild.length==5){
 					let obj = {
@@ -383,9 +385,12 @@
 					    key: 'buildInfo',　
 					    data: obj,
 					    success: function (res) {
-							that.getStoragedata()
-					        that.getIncompleteCardFunc()
-					        that.getcompleteCardFunc()
+							that.getStoragedata() 
+							setTimeout (function (){
+								that.getIncompleteCardFunc()
+								that.getcompleteCardFunc()
+							},100)
+					        
 					    }
 					})   
 					this.$refs[e].close()
@@ -401,6 +406,7 @@
 			// 抽屉状态发生变化触发
 			change(e, type) {
 				//打开
+				// console.log(e)
 				if(e){
 					let opts = {
 						url: this.api+'/module_project/InspectAccept/InspectAccept.php',
@@ -412,7 +418,7 @@
 					}
 					let isLoading = true//是否需要加载动画
 					this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-						// console.log(res.data)
+						console.log(res.data)
 						uni.hideLoading()//隐藏加载中转圈圈
 						this.isloading = false//取消遮罩层
 						// console.log(res.data)
@@ -446,9 +452,11 @@
 			},
 			// 遍历区段楼层并存储在数组中
 			createFloorFunc(data) {
-				// console.log(data)
+				console.log(data)
 				let buildData = data
-				let sectionData = this.commonFunc.Es5duplicate(data,'section')
+				console.log(this.commonFunc)
+				let sectionData = this.commonFunc.Es5duplicate(data,'section') // 去掉section值相等的对象
+				console.log(sectionData)
 				let floorData = data
 				for(var i=0;i<sectionData.length;i++){
 					var obj = {
@@ -543,13 +551,16 @@
 					this.tree.push(obj)
 				}
 				this.treeArr=JSON.parse(JSON.stringify(this.tree)) //防止this指向数据修改联动
+				console.log(this.treeArr)
 				for(var i=0;i<this.treeArr.length;i++){
 					this.tree[i].children = []
 					let buildData = this.commonFunc.Es5duplicate(this.treeArr[i].children,'name')
 					this.tree[i].children = buildData
 				}
+				console.log(this.tree)
 			},
 			selDataFunc(data) {
+				// console.log(data)
 				this.selDataFromChild = data
 			},
 			//获取实测实量未完成卡片
@@ -567,6 +578,7 @@
 					buildSelData: buildSelData,
 					isSelBuild: this.isSelBuild
 				}
+				// console.log(param)
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					// console.log(res.data)
@@ -576,6 +588,10 @@
 						// console.log(res.data)
 						this.incompleteNum = res.data.data.length
 						this.incompleteCardList = res.data.data
+						uni.setStorage({
+							key: 'incompleteCardList',
+							data: this.incompleteCardList
+						})
 						// this.createFloorFunc(res.data.data)
 					}
 				}, error => {
@@ -614,9 +630,17 @@
 			}, 
 			//跳转到实测录入测点页面
 			toActualMeasure(item) {
+				// console.log(item)
 				let itemStr = JSON.stringify(item)
 				uni.navigateTo({
 					url:`MeasurePoint?currentData=${this.currentData}`+`&cardParam=${itemStr}`+`&projectId=${that.projectId}`
+				})
+			},
+			// 跳转到统计分析
+			toItemAnalysis(item) {
+				let itemStr = JSON.stringify(item)
+				uni.navigateTo({
+					url:`StatisticsAnalysis?currentData=${this.currentData}`+`&cardParam=${itemStr}`+`&projectId=${that.projectId}`
 				})
 			},
 			// 跳转到测点布置页面

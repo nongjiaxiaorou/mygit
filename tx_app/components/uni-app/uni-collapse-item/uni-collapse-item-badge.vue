@@ -3,6 +3,8 @@
 		<view class="uni-collapse-cell__title" @click="onClick">
 			<image v-if="thumb" :src="thumb" class="uni-collapse-cell__title-img" />
 			<text class="uni-collapse-cell__title-text">{{ title }}</text>
+			<uni-badge :text="pointTatalNum" type="primary" size="small" ></uni-badge>
+			<uni-badge :text="unQualifiedBadge" type="error" size="small" ></uni-badge>
 			<!-- #ifdef MP-ALIPAY -->
 			<view :class="{ 'uni-collapse-cell__title-arrow-active': isOpen, 'uni-collapse-cell--animation': showAnimation === true }" class="uni-collapse-cell__title-arrow">
 				<uni-icons color="#bbb" size="20" type="arrowdown" />
@@ -22,6 +24,7 @@
 
 <script>
 	import uniIcons from '../uni-icons/uni-icons.vue'
+	import uniBadge from '@/components/uni-app/uni-badge/uni-badge.vue';
 	/**
 	 * CollapseItem 折叠面板子组件
 	 * @description 折叠面板子组件
@@ -65,11 +68,18 @@
 				// 缩略图
 				type: String,
 				default: ''
+			},
+			qualifiedBadge: String,
+			unQualifiedBadge: String,
+		},
+		computed: {
+			pointTatalNum () {
+				return parseInt(this.unQualifiedBadge) + parseInt(this.qualifiedBadge) +''
 			}
 		},
 		data() {
 			return {
-				isOpen: false,
+				isOpen: false
 			}
 		},
 		watch: {
@@ -106,7 +116,9 @@
 				}
 				this.isOpen = !this.isOpen
 				this.collapse.onChange && this.collapse.onChange()
-				this.$forceUpdate();
+				this.$forceUpdate()
+				// console.log(this.unQualifiedBadge);
+				// console.log(this.pointTatalNum)
 			}
 		}
 	}
@@ -116,7 +128,7 @@
 	.uni-collapse-cell {
 		flex-direction: column;
 		border-color: #e5e5e5;
-		border-bottom-width: 0px;
+		border-bottom-width: 1px;
 		border-bottom-style: solid;
 	}
 
@@ -125,7 +137,7 @@
 	}
 
 	.uni-collapse-cell--open {
-		background-color: #FFFFFF;
+		background-color: #f1f1f1;
 	}
 
 	.uni-collapse-cell--disabled {
@@ -190,7 +202,6 @@
 		/* #endif */
 		overflow: hidden;
 		text-overflow: ellipsis;
-		text-align: center;
 	}
 
 	.uni-collapse-cell__content {

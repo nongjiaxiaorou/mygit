@@ -1,0 +1,17 @@
+{
+  "name": "tx_app",
+  "version": "1.0.0",
+  "description": "┌─common        \t\t放置公共样式，目前在free.css已经封装了一些公共样式\r │─components            符合vue组件规范的uni-app组件目录\r │  └─common\r │  │ \t└─comp-a.vue\t全局可复用的a组件，命名规范xxx-xx.vue\t\r │  └─index       \t\tindex相关组件及模态框\r │     └─index-a.vue     index页面\r │     └─dialog       \tindex模态框存放位置\r ├─pages                 业务页面文件存放的目录\r │  ├─index\r │  │  └─index.vue       index页面(除了index页面外，其余页面开头字母大写)\r │  └─list\r │     └─List.vue        list页面\r ├─static                存放应用引用静态资源（如图片、视频等）的目录，注意：静态资源只能存放于此\r ├─main.js               Vue初始化入口文件\r ├─App.vue               应用配置，用来配置App全局样式以及监听 应用生命周期\r ├─manifest.json         配置应用名称、appid、logo、版本等打包信息，详见\r └─pages.json            配置页面路由、导航条、选项卡等页面类信息，详见",
+  "main": "main.js",
+  "dependencies": {
+    "numeral": "^2.0.6",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

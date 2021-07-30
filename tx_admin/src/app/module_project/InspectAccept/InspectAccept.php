@@ -56,6 +56,7 @@
 	                $i++;
 				}
 				$data['data'] = $res;
+			
             }else {
 				$data['code'] = 0;
 			}
@@ -105,7 +106,7 @@
 			$createUserName = isset($_POST["createUserName"])?$_POST["createUserName"]:'';
 			$createUserId = isset($_POST["createUserId"])?$_POST["createUserId"]:'';
 			$substractor = isset($_POST["substractor"])?$_POST["substractor"]:'';
-			$sql = "INSERT INTO tb_inspectaccept_measure SET `proTimeStamp` = '$proTimeStamp',`projectName` = '$projectName',`build` = '$build',`floor` = '$floor',`unitName` = '$unit',`inspectPosition` = '$inspectPosition',`inspectPerson` = '$inspectPerson',`constructionTeam` = '$constructionTeam',`teamLeaderName` = '$leaderName',`contactMode` = '$contactMode',`constructionDate` = '$construnctionDate',`inspectDate` = '$inspectDate',`projectCategory` = '',`inspectItem` = '$inspectItem',`measureState` = '未完成',`createTime` = '$createTime',`createUserName` = '$createUserName',`createUserId` = '$createUserId',`measureType` = '检查验收',`subcontract` = '$substractor',`isRead` = '0',`isDelete` = '0'";
+			$sql = "INSERT INTO tb_inspectaccept_measure SET `proTimeStamp` = '$proTimeStamp',`projectName` = '$projectName',`build` = '$build',`floor` = '$floor',`unitName` = '$unit',`inspectPosition` = '$inspectPosition',`inspectPerson` = '$inspectPerson',`constructionTeam` = '$constructionTeam',`teamLeaderName` = '$leaderName',`contactMode` = '$contactMode',`constructionDate` = '$construnctionDate',`inspectDate` = '$inspectDate',`projectCategory` = '$projectType',`inspectItem` = '$inspectItem',`measureState` = '未完成',`createTime` = '$createTime',`createUserName` = '$createUserName',`createUserId` = '$createUserId',`measureType` = '检查验收',`subcontract` = '$substractor',`isRead` = '0',`isDelete` = '0'";
 			$result = $conn -> query($sql);
 			if(!$result){
 				$data['code'] = 0;
@@ -294,12 +295,14 @@
 		case 'addMeasureTaskCard':
 			$proTimeStamp = isset($_POST["proTimeStamp"])?$_POST["proTimeStamp"]:'';
 			$projectType = isset($_POST["projectType"])?$_POST["projectType"]:'';
+			$data['$projectType'] = $projectType;
 			$inspectItem = isset($_POST["inspectItem"])?$_POST["inspectItem"]:'';
 			$buildInfo = isset($_POST["buildInfo"])?$_POST["buildInfo"]:'';
 			$buildInfo = json_decode($buildInfo,true);
 			$inputValue = isset($_POST["inputValue"])?$_POST["inputValue"]:'';
 			$inputValue = json_decode($inputValue,true);
 			$projectName = isset($_POST["projectName"])?$_POST["projectName"]:'';
+			$section = $buildInfo["section"];
 			$build = $buildInfo["build"];
 			$floor = $buildInfo["floor"];
 			$unit = $buildInfo["unit"];
@@ -315,7 +318,7 @@
 			$createUserName = isset($_POST["createUserName"])?$_POST["createUserName"]:'';
 			$createUserId = isset($_POST["createUserId"])?$_POST["createUserId"]:'';
 			$substractor = isset($_POST["substractor"])?$_POST["substractor"]:'';
-			$sql = "INSERT INTO tb_inspectaccept_measure SET `proTimeStamp` = '$proTimeStamp',`projectName` = '$projectName',`build` = '$build',`floor` = '$floor',`unitName` = '$unit',`inspectPosition` = '$inspectPosition',`inspectPerson` = '$inspectPerson',`constructionTeam` = '$constructionTeam',`teamLeaderName` = '$leaderName',`contactMode` = '$contactMode',`constructionDate` = '$construnctionDate',`inspectDate` = '$inspectDate',`projectCategory` = '',`inspectItem` = '$inspectItem',`measureState` = '未完成',`createTime` = '$createTime',`createUserName` = '$createUserName',`createUserId` = '$createUserId',`measureType` = '实测实量',`subcontract` = '$substractor',`isRead` = '0',`isDelete` = '0'";
+			$sql = "INSERT INTO tb_inspectaccept_measure SET `proTimeStamp` = '$proTimeStamp',`projectName` = '$projectName',`section` = '$section', `build` = '$build',`floor` = '$floor',`unitName` = '$unit',`inspectPosition` = '$inspectPosition',`inspectPerson` = '$inspectPerson',`constructionTeam` = '$constructionTeam',`teamLeaderName` = '$leaderName',`contactMode` = '$contactMode',`constructionDate` = '$construnctionDate',`inspectDate` = '$inspectDate',`projectCategory` = '$projectType',`inspectItem` = '$inspectItem',`measureState` = '未完成',`createTime` = '$createTime',`createUserName` = '$createUserName',`createUserId` = '$createUserId',`measureType` = '实测实量',`subcontract` = '$substractor',`isRead` = '0',`isDelete` = '0'";
 			$result = $conn -> query($sql);
 			if(!$result){
 				$data['code'] = 0;
@@ -346,7 +349,9 @@
 					$resData['inspectDate'] = $row['inspectDate'];
 					$resData['subcontract'] = $row['subcontract'];
 					$resData['createUserName'] = $row['createUserName'];
+					$resData['inspectPerson'] = $row['inspectPerson'];
 					$resData['inspectItem'] = $row['inspectItem'];
+					$resData['projectCategory'] = $row['projectCategory'];
 					$res[$i] = $resData;
 		            $i++;
 				}
@@ -380,6 +385,7 @@
 					$resData['inspectDate'] = $row['inspectDate'];
 					$resData['subcontract'] = $row['subcontract'];
 					$resData['createUserName'] = $row['createUserName'];
+					$resData['inspectPerson'] = $row['inspectPerson'];
 					$resData['inspectItem'] = $row['inspectItem'];
 					$res[$i] = $resData;
 		            $i++;
@@ -394,6 +400,8 @@
 			$cardIdArr = json_decode($cardId);
 			for($i=0;$i<count($cardIdArr);$i++){
 				$sql = "DELETE FROM tb_inspectaccept_measure WHERE `id`='$cardIdArr[$i]'";
+				$result = $conn -> query($sql);
+				$sql = "DELETE FROM tb_measure_measurepoint WHERE `measureId`='$cardIdArr[$i]'";
 				$result = $conn -> query($sql);
 			}
 			if($result)	{

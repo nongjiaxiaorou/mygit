@@ -1,16 +1,16 @@
 <template>
 	<view style="background-color: #f5f5f5;height: 100vh;">
-		<search v-if="searchIf" ref="sea" @confirm="confirmSearch" />
+		<!-- <search v-if="searchIf" ref="sea" @confirm="confirmSearch" /> -->
 		<view class="all">
 			<view class="sheng">
 				<view class="title">
 					<scroll-view scroll-x="true" style="width: 100%;overflow: hidden;white-space: nowrap;" scroll-left="100">
 						<view v-for="(item,index) in parent" style="display:inline-block" :key="index">
 							<view style='display:inline-block' v-if="index==0" @click="backTree(item,-1)" :class="index==parent.length-1&&!isre?'none':'active'">全部</view>
-							<view style='display:inline-block' v-if="index==0&&isre" @click="backTree(item,-2)" :class="index==parent.length-1&&isre?'none':'active'">
+							<!-- <view style='display:inline-block' v-if="index==0&&isre" @click="backTree(item,-2)" :class="index==parent.length-1&&isre?'none':'active'">
 								<text style='display:inline-block;margin: 0 6px;color: #D0D4DB;' class="iconfont icon-arrow-right"></text>
 								搜索结果
-							</view>
+							</view> -->
 							<view style='display:inline-block' @click="backTree(item,index)">
 								<text style='display:inline-block;margin: 0 6px;color: #D0D4DB;' v-if="index!=0" class="iconfont icon-right"></text>
 								<text style='display:inline-block' :class="index==parent.length-1?'none':'active'">
@@ -43,7 +43,7 @@
 	// import url("./css/icon.css");
 	export default {
 		props: {
-			trees: {
+			trees: { 
 				type: Array,
 				default: () => []
 			},
@@ -115,7 +115,6 @@
 			},
 			toChildren(item) {
 				var that = this;
-				// console.log(item)
 				let children = that.props.children
 				if(that.parent.length<4){
 					that.tree = item[children]
@@ -124,6 +123,14 @@
 				}else if(that.parent.length<5){
 					item.isSel = true
 					that.parent.push(item)
+					// console.log(that.tree)
+				} else if (that.parent.length == 5){
+					for(let i=0; i<2; i++)
+						that.tree[i].isSel = false;
+					item.isSel = true
+					// console.log(that.parent[4])
+					that.parent[4] = item
+					// console.log(that.tree)
 				}
 				this.$emit('sendChildData',that.parent);
 				// console.log(that.parent)
@@ -173,7 +180,7 @@
 					this.parent.splice(1, 6666)
 					this.isre = false
 					this.selClearFunc(this.tree)
-					this.$refs.sea.clears()
+					// this.$refs.sea.clears()
 				} else if (index == -2) {
 					this.tree = this.searchResult
 					this.selClearFunc(this.tree)
@@ -201,8 +208,9 @@
 				// console.log(item)
 				let children = that.props.children
 				// that.buildSelData
-			
+			    console.log(this.tree)
 				for(var i=0;i<this.tree.length;i++){
+					console.log(this.tree[i].name)
 					if(this.tree[i].name==that.buildSelData.section){
 						that.parent.push(this.tree[i])
 						var build = this.tree[i][children]
@@ -230,6 +238,7 @@
 					}
 					// that.tree = item[children]
 					// that.parent.push(item)
+					console.log(that.parent)
 				}
 			}
 		},
@@ -237,10 +246,11 @@
 			"trees": {
 				handler(newValue, oldValue) {
 					let obj = this.commonFunc.Es5duplicate(newValue,'name')
+					console.log(obj)
 					this.tree = JSON.parse(JSON.stringify(obj))
 					// this.tree = this.commonFunc.Es5duplicate(newValue,'name')
 					this.allData = JSON.parse(JSON.stringify(obj))
-					// console.log(newValue);
+					console.log(newValue);
 					this.getSeletedBuilding()
 				}
 		    }

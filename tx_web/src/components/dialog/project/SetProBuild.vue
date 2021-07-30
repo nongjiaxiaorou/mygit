@@ -156,7 +156,13 @@
 				}
 			}
 		},
+		created() {
+			console.log(this.zoneForm);
+
+			this.getBuild()
+		},
 		mounted() {
+			console.log(this.zoneForm);
 			this.getBuild()
 		},
 		methods: {

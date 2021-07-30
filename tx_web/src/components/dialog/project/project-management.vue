@@ -3,7 +3,7 @@
 	<div :style="{height:this.commonFunc.screeHeight*1.4 +'px'}">
 		<el-row>
 			<el-col :span="8" style="height: 150px;border: 1px solid #000000;">
-				<div class="grid-content title-text title-box">1 区号及类别筛/{{registerBaseData.projectName}} <i class="el-icon-info"
+				<div class="grid-content title-text title-box"> 区号及类别筛/{{registerBaseData.projectName}} <i class="el-icon-info"
 					 title="若选项框没有数据,需要到项目登记的基本信息中进行区段定义!"></i></div>
 				<div class="grid-content-box">
 					<div class="block">
@@ -13,7 +13,7 @@
 				</div>
 			</el-col>
 			<el-col :span="16" style="height: 150px;border: 1px solid #000000;">
-				<div class="grid-content title-text title-box">增加栋号（注：请先完成1 区号及类别筛选）</div>
+				<div class="grid-content title-text title-box">增加栋号（注：请先完成 区号及类别筛选）</div>
 				<div class="grid-content-box">
 					<el-cascader class="customCascader" v-model="newAddValue" :options="options" :props="{ expandTrigger: 'hover' }" @change="newAddInfo"></el-cascader>
 					<el-button type="primary" class="circle-mg" icon="el-icon-edit" circle @click="openAddBuildDialog"></el-button>
@@ -23,7 +23,7 @@
 		<el-row>
 			<el-col :span="8" style="height: 400px;border: 1px solid #000000;">
 				<el-row>
-					<div class="grid-content title-text title-box">2 楼号信息</div>
+					<div class="grid-content title-text title-box"> 楼号信息</div>
 				</el-row>
 				<div class="content-table-box">
 					<el-table :height="this.commonFunc.screeHeight/1.5" :data="tableData1" style="width: 100%" max-height="300" empty-text="请选择区号"
@@ -45,7 +45,7 @@
 					<el-col :span="24">
 						<div class="flex grid-content title-text title-box flex-box">
 							<div>
-								3 实测单元信息{{buildSel}}
+								 实测单元信息{{buildSel}}
 								<i class="el-icon-info" title="若当前行楼层的字体为绿色,则已上传图片,请将鼠标移至相应楼层查看图片"></i>
 							</div>
 							<div>
@@ -152,7 +152,7 @@
 		methods: {
 			handlefloorSelectionChange(val) {
 				this.floorSel = val;
-				// console.log(this.floorSel)
+				console.log(this.floorSel)
 			},
 			//获取栋号信息
 			getBuildInfo(value) {
@@ -373,7 +373,7 @@
 				this.getBuildPersonFunc()
 			},
 			openDialog() {
-				// console.log(this.floorSel)
+				console.log(this.floorSel)
 				this.floorData = this.floorSel
 				this.dialogImportPic.show = true
 			},
