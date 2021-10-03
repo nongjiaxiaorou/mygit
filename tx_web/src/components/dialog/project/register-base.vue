@@ -99,7 +99,8 @@
 				</el-col>
 				<el-col :span="8">
 					<div class="grid-content info-label title-box">
-						<el-button style="width: 100%;height: 32px;color: #a9a5a0;" @click="setZone">进入区段设置</el-button>
+						<el-button style="width: 100%;height: 32px;color: #a9a5a0;" @click="setZone" v-if="this.definedColor">进入区段设置</el-button>
+						<el-button type="primary" style="width: 100%;height: 32px;" @click="setZone" v-if="this.undefinedColor">进入区段设置</el-button>
 					</div>
 				</el-col>
 				
@@ -110,7 +111,7 @@
 				</el-col>
 			</div>
 		</el-row>
-		<SetProZone :dialogSet="dialogSet" :form="form"></SetProZone>
+		<SetProZone :dialogSet="dialogSet" :form="form" @func="getMsgFormSon"></SetProZone>
 	</div>
 </template>
 
@@ -118,7 +119,7 @@
 	import SetProZone from '../../dialog/project/SetProZone';
 	export default {
 		props:{
-			registerBaseData:Object
+			// registerBaseData:Object
 		},
 		components:{
 			SetProZone
@@ -128,13 +129,48 @@
 				dialogSet: {
 					show: false
 				},
-				form:{}
+				form:{},
+				color: '',
+				definedColor: '',
+				undefinedColor: '',
+				registerBaseData: [],
 			}
 		},
 		mounted() {
-			
+			let registerBaseData = sessionStorage.getItem('registerBaseData')
+            this.registerBaseData = JSON.parse(registerBaseData)
+			this.getMsgFormSon()
 		},
 		methods : {
+			getMsgFormSon(data){
+				this.color = data
+				console.log(this.color)
+				console.log(1111)
+				if (this.color == 'bule') {
+					this.definedColor = false
+					this.undefinedColor = true
+				}
+				else {
+					this.definedColor = true
+					this.undefinedColor = false
+				}
+				console.log(this.definedColor)
+				console.log(this.undefinedColor)
+			},
+			
+			// buttonColor(){
+			// 	if (this.color == 'bule') {
+			// 		this.definedColor = false
+			// 		this.undefinedColor = true
+			// 	}
+			// 	else {
+			// 		this.definedColor = true
+			// 		this.undefinedColor = false
+			// 	}
+			// 	console.log(this.definedColor)
+			// 	console.log(this.undefinedColor)
+			// },
+
 			//区段设置
 			setZone(){
 				//打开模态框
@@ -143,6 +179,8 @@
 					proTimeStamp : this.registerBaseData.timeStamp,
 					projectName : this.registerBaseData.projectName,
 				}
+				this.getMsgFormSon()
+				console.log(this.color)
 			},
 			//提交
 			submit(){

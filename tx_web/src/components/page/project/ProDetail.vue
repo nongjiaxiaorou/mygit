@@ -24,14 +24,14 @@
 				</el-tab-pane>
 
 
-				<el-tab-pane label="项目管理" style="margin-left: 10%;width: 88%;">
-					<projectManagement ref='anagement' :registerBaseData="registerBaseData"></projectManagement>
+				<el-tab-pane label="项目管理" style="margin-left: 10%;width: 88%;" >
+					<projectManagement :registerBaseData="registerBaseData"></projectManagement>
 				</el-tab-pane>
 
 
-				<el-tab-pane label="项目统计"  style="margin-left: 10%;width: 88%;">
+				<!-- <el-tab-pane label="项目统计"  style="margin-left: 10%;width: 88%;">
 					<projectStatistics :registerBaseData="registerBaseData">aaa</projectStatistics>
-				</el-tab-pane>
+				</el-tab-pane> -->
 
 				<el-tab-pane label="质量巡查" style="margin-left: 10%;width: 88%;">
 					<inspectionZone :registerBaseData="registerBaseData"></inspectionZone>
@@ -121,7 +121,8 @@
 			handleChange(){
 				//点击触发子组件方法
 				console.log(this.$refs);
-				this.$refs.anagement.getSectionInfo()
+				// this.$refs.anagement.getSectionInfo()
+				
 			},
 			//获取架构等级
 			getFramework() {

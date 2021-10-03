@@ -65,6 +65,7 @@
 		},
 		data() {
 			return {
+				color:'bule',
 				currentPage: 1, //初始页
 				pagesize: 10, //每页的数据
 				tableData: [],
@@ -77,6 +78,7 @@
 				dialogImport: {
 					show: false
 				},
+				registerBaseData: [],
 			};
 		},
 		computed: {
@@ -103,12 +105,35 @@
 					// console.log(newValue)
 					this.getSection()
 				}
-			}
+			},
+			tableData: 
+				function (){
+					this.passColor()
+				}
+			
 		},
 		mounted() {
-
+			let registerBaseData = sessionStorage.getItem('registerBaseData')
+            this.registerBaseData = JSON.parse(registerBaseData)
+			this.getSection()
+			this.passColor()
+			
 		},
+
 		methods: {
+
+			passColor() {
+				console.log(this.tableData)
+				if(this.tableData == '') {
+					this.color = 'bule'
+				}
+				else {
+					this.color = ''
+				}
+				console.log(this.color)
+				this.$emit('func',this.color)				
+			},
+			
 			checkSectionName(section) {
 				const that = this
 				let fd = new FormData()
@@ -171,8 +196,8 @@
 				const that = this
 				let fd = new FormData()
 				fd.append('flag', 'getSection')
-				fd.append('proTimeStamp', that.form.proTimeStamp)
-
+				fd.append('proTimeStamp', that.registerBaseData.timeStamp)
+				console.log(that.form)
 				that.$axios.post(that.$adminUrl + `/project/SetProZone.php`, fd).then(res => {
 					console.log(res)
 					this.tableData = []
@@ -240,11 +265,14 @@
 			dialogFormAdd(){
 				this.FormTabelEmpty();
 				this.dialogSet.show = false;
+				
 			},
 			//关闭模态框
 			dialogFormClose(dialogSet) {
 				this.FormTabelEmpty();
 				this.dialogSet.show = false;
+				this.passColor();
+				
 			},
 			//清空表单
 			FormTabelEmpty() {

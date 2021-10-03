@@ -3,19 +3,19 @@
 		<el-dialog title="统计详情" :visible.sync="dialogProSta.show">
 			<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
                 <!-- 红线逾期页面 -->
-                <el-tab-pane label="一般隐患逾期" name="first">
+                <el-tab-pane label="红线逾期" name="first">
                     aa
                 </el-tab-pane> 
                 <!-- 红线问题页面 -->
-                <el-tab-pane label="重大隐患逾期" name="second">
+                <el-tab-pane label="红线问题" name="second">
                     bb
                 </el-tab-pane>
                 <!-- 普通逾期页面 -->
-                <el-tab-pane label="一般隐患" name="third">
+                <el-tab-pane label="普通逾期" name="third">
                     cc
                 </el-tab-pane>
                 <!-- 普通隐患页面 -->
-                <el-tab-pane label="重大隐患" name="fourth">
+                <el-tab-pane label="普通隐患" name="fourth">
                     dd
                 </el-tab-pane>
                 <!-- 项目合格率页面 -->
@@ -67,13 +67,5 @@ export default {
           }]
         }
     },
-    mounted () {
-        getData ()    
-    },
-    methods: {
-        getData () {
-            
-        }
-    }
 }
 </script>

@@ -245,7 +245,7 @@
 								this.tableData1.push(res.data.data[i])
 								draftIndex++
 							}else if(res.data.data[i].state=="整改中"){
-								res.data.data[i].index = draftIndex
+								res.data.data[i].index = rectification
 								this.tableData2.push(res.data.data[i])
 								rectification++
 							}else if(res.data.data[i].state=="已完成"){

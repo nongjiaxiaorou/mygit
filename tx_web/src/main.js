@@ -4,7 +4,7 @@ import router from './router';
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
 import axios from 'axios';
-import { messages } from './components/common/i18n';
+import  messages  from './components/common/i18n';
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 // import './assets/css/theme-green/index.css'; // 浅绿色主题
 import './assets/css/icon.css';
@@ -12,7 +12,7 @@ import './assets/css/common.css';
 import './components/common/directives';
 import 'babel-polyfill';
 
-
+Vue.prototype.$EventBus = new Vue()
 //引入moment.js
 import moment from 'moment';
 Vue.prototype.$moment = moment //赋值使用 就是调用一下
@@ -22,6 +22,10 @@ moment.locale('zh-cn') // 这里是进行了汉化
 import adminUrl from './api/index.js'
 Vue.prototype.$adminUrl = adminUrl.commonUrl
 Vue.prototype.$adminImgUrl = adminUrl.commonImgUrl
+
+//注册打印
+import Print from './print'
+Vue.use(Print)
 
 //全局引入公共方法
 import commonFunc from '../src/utils/utils'

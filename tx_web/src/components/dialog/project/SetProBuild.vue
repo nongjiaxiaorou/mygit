@@ -24,7 +24,8 @@
 							<el-table-column prop="category" label="类别" align="center">
 								<template slot-scope="scope">
 									<el-form :model="scope.row">
-										<el-cascader ref="myCascader" :options="categoryList" v-model="scope.row.category">
+										
+										<el-cascader ref="myCascader" :options="categoryList" v-model="scope.row.category" @change="handleChange(scope.row)">
 										</el-cascader>
 									</el-form>
 								</template>
@@ -100,6 +101,16 @@
 		},
 		data() {
 			return {
+				formDate:{
+					inspectDate:'',
+					inspectItem:'',
+					inspectPerson:'',
+                    inspectPosition:'',
+                    id:'',
+                    timeStamp: '',
+                    categories: '',
+                    projectName: '',
+                },
 				currentPage: 1, //初始页
 				pagesize: 10, //每页的数据
 				tableData: [],
@@ -107,6 +118,7 @@
 				dialogDefineBuild:{
 					show:false
 				},
+				category: [],
 				categoryList: [{
 						value: '厂房项目',
 						label: '厂房项目'
@@ -151,21 +163,19 @@
 		watch: {
 			zoneForm: {
 				handler(newValue, oldValue) {
-					// console.log(newValue)
+					console.log(newValue)
 					this.getBuild()
 				}
 			}
 		},
-		created() {
-			console.log(this.zoneForm);
-
-			this.getBuild()
-		},
 		mounted() {
-			console.log(this.zoneForm);
 			this.getBuild()
 		},
 		methods: {
+			handleChange (row) {
+				row.category = row.category[0];
+				console.log(row.category);
+			},
 			//新增该区段栋号
 			handleAdd() {
 				this.$prompt('请输入栋号数目', '提示', {
@@ -202,10 +212,22 @@
 			//获取区段
 			getBuild() {
 				const that = this
+				let registerBaseData = sessionStorage.getItem('registerBaseData')
+				registerBaseData = JSON.parse(registerBaseData)
+				that.formDate.id = registerBaseData.id
+				that.formDate.inspectDate = registerBaseData.inspectDate
+				that.formDate.inspectItem = registerBaseData.inspectItem
+				that.formDate.inspectPerson = registerBaseData.inspectPerson
+				that.formDate.inspectPosition = registerBaseData.inspectPosition
+				that.formDate.timeStamp = registerBaseData.timeStamp
+				that.formDate.categories = registerBaseData.categories
+				that.formDate.projectName = registerBaseData.projectName
+				console.log(that.formDate)
 				let fd = new FormData()
 				fd.append('flag', 'getBuild')
 				fd.append('section', that.zoneForm.section)
-			
+				fd.append('projectName', that.formDate.projectName)
+				fd.append('timeStamp', that.formDate.timeStamp)
 				that.$axios.post(that.$adminUrl + `/project/SetProBuild.php`, fd).then(res => {
 					console.log(res.data)
 					let dataLen = res.data.length
@@ -219,7 +241,14 @@
 							undergroundNumber:element.undergroundNumber,
 							abovegroundNumber:element.abovegroundNumber,
 						})
+						
 					});
+					console.log(this.tableData);
+					for(let i=0;i<this.tableData.length;i++) {
+						this.category[i] = this.tableData[i].category
+						console.log(this.category[i])
+					}
+								
 				}).catch({
 
 				})
@@ -249,6 +278,7 @@
 						type: 'success',
 						message: '定义完成！'
 					});
+					this.getBuild()
 					that.dialogFormClose()
 				}).catch({
 				
@@ -299,6 +329,7 @@
 			dialogFormClose(dialogSetFloor) {
 				this.FormTabelEmpty();
 				this.dialogSetFloor.show = false;
+				
 			},
 			//清空表单
 			FormTabelEmpty() {

@@ -179,6 +179,7 @@
 </template>
 
 <script>
+import {eventBus} from "./QualityInspection/event-bus.js";
 	export default {
 		name: 'register-person',
 		props:{
@@ -292,7 +293,7 @@
 					return item.value === e
 				})
 				// console.log(obj.userId)
-				this.nodeList.[this.nodeList.length-1].userId = obj.userId
+				this.nodeList[this.nodeList.length-1].userId = obj.userId
 			},
 			handleClick(tab, event) {
 				console.log(tab, event);
@@ -349,9 +350,21 @@
 				that.$axios.post(that.$adminUrl+`/project/detail.php`,fd).then(res=>{
 					console.log(res)
 					that.$message.success('提交成功！')
+					console.log(that.$EventBus)
+					sessionStorage.setItem('nodeList',JSON.stringify(that.nodeList))
+					that.$EventBus.$emit("SubmittedManagement", {
+						nodeList:that.nodeList,
+					});
+					// this.$router.push({
+					// 	path: '../QualityInspection/blank',
+					// 	name: 'blank'
+					// })
+					// location.reload()
+					// this.reload()
 				}).catch({
 					
 				})
+				
 			}
 		},
 	};

@@ -8,17 +8,21 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "babel-polyfill": "^6.26.0",
     "element-ui": "^2.11.0",
     "iview": "^3.5.4",
+    "less-loader": "^5.0.0",
     "mavon-editor": "^2.6.17",
     "moment": "^2.29.1",
     "monent": "0.0.2-security",
+    "node-sass": "^4.14.1",
     "path": "^0.12.7",
+    "sass-loader": "^8.0.2",
     "vue": "^2.6.10",
     "vue-cropperjs": "^3.0.0",
     "vue-i18n": "^8.10.0",
+    "vue-print-nb": "^1.7.4",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.3",
     "vue-schart": "^2.0.0",
@@ -27,8 +31,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-service": "^3.9.0",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^10.0.2",
+    "koa2-cors": "^2.0.6",
     "vue-template-compiler": "^2.6.10"
   }
 }

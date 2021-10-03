@@ -179,12 +179,6 @@ export default new Router({
 					component: resolve =>require(['@/components/page/datacheck/ConcreteDetail.vue'],resolve),
 				    meta: { title: '混凝土专项管理详情' }
 				},
-				{
-					path: '/ProStaticsDetail',
-					name: 'ProStaticsDetail',
-					component: resolve =>require(['@/components/page/project/projectStatistics/ProStaticsDetail'],resolve),
-				    meta: { title: '统计详情' }
-				},
                 /** 系统管理 **/
                 {
                     path: '/user',
@@ -216,6 +210,72 @@ export default new Router({
 					component: resolve =>require(['@/components/page/system/Journal.vue'],resolve),
                     meta: { title: '系统操作日志', permission: true }
                 },
+				{
+					path: '/DetailedInspection',
+					name:'DetailedInspection',
+					component: resolve =>require(['@/components/dialog/project/DetailedInspection.vue'],resolve),
+					meta: { title: '查看查询', permission: true }
+				},
+				{
+					path: '/QualityInspections',
+					name:'QualityInspections',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/QualityInspections.vue'],resolve),
+					meta: { title: 'a', permission: true }
+				},
+				{
+					path: '/InspectMeasured',
+					name:'InspectMeasured',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/InspectMeasured.vue'],resolve),
+					meta: { title: 'b', permission: true }
+				},
+				{
+					path: '/ProjectMeasurement',
+					name:'ProjectMeasurement',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/ProjectMeasurement.vue'],resolve),
+					meta: { title: '项目实测', permission: true }
+				},
+				{
+					path: '/ProjectScreening',
+					name:'ProjectScreening',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/ProjectScreening.vue'],resolve),
+					meta: { title: '项目排查', permission: true }
+				},
+				{
+					path: '/projectAcceptance1',
+					name:'projectAcceptance1',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/projectAcceptance1.vue'],resolve),
+					meta: { title: '实名制工序验收', permission: true }
+				},
+				{
+					path: '/projectAcceptance2',
+					name:'projectAcceptance2',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/projectAcceptance2.vue'],resolve),
+					meta: { title: '红线工序验收', permission: true }
+				},
+				{
+					path: '/itemInspectInformation',
+					name:'itemInspectInformation',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/itemInspectInformation.vue'],resolve),
+					meta: { title: '项目实测信息', permission: true }
+				},
+				{
+					path: '/printMeasurementPic',
+					name:'printMeasurementPic',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/printMeasurementPic.vue'],resolve),
+					meta: { title: '打印测点图片', permission: true }
+				},
+				{
+					path: '/PrintHandPainted',
+					name:'PrintHandPainted',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/PrintHandPainted.vue'],resolve),
+					meta: { title: '打印手绘布点图', permission: true }
+				},
+				{
+					path: '/blank',
+					name:'blank',
+					component: resolve =>require(['@/components/dialog/project/QualityInspection/blank.vue'],resolve),
+					meta: { title: '空白页', permission: true }
+				},
 				{
 				    path: '/403',
 					component: resolve =>require(['@/components/page/403.vue'],resolve),

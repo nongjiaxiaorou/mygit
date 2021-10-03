@@ -30,6 +30,7 @@
 					</el-table-column>
 				</el-table>
 			</div>
+            <ProStatisticsDetail :dialogProSta=dialogProSta ></ProStatisticsDetail>
 			<div class="pagination">
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
 				 :page-sizes="[5, 10, 20, 40]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="tableData.length">
@@ -40,7 +41,7 @@
 </template>
 
 <script>
-import ProStatisticsDetail from '../../page/project/projectStatistics/ProStaticsDetail'
+import ProStatisticsDetail from '../../dialog/project/ProStaticsDetail'
 	export default {
 		name: 'register-person',
 		props: {
@@ -57,6 +58,9 @@ import ProStatisticsDetail from '../../page/project/projectStatistics/ProStatics
 				tableData: [],
 				value: '',
                 options: [],
+                dialogProSta: {
+                    show:false
+                }
 			}
 		},
 		computed: {
@@ -78,7 +82,6 @@ import ProStatisticsDetail from '../../page/project/projectStatistics/ProStatics
 		},
 		mounted() {
 			this.getSectionInfo()
-			console.log(this.registerBaseData);
 		},
 		watch: {
 			"registerBaseData.timeStamp": {
@@ -138,12 +141,13 @@ import ProStatisticsDetail from '../../page/project/projectStatistics/ProStatics
 			//跳转到质量巡查详细页面
 			handleJump(index, row) {
 				//每次进入存储session值，以防子页面刷新数据丢失
-                // console.log(row);
-				sessionStorage.setItem('registerBaseData1',JSON.stringify(row))
-				this.$router.push({
-					name: 'ProStaticsDetail',
-					params:row
-				})
+                console.log(row);
+                this.dialogProSta.show = true;
+				// sessionStorage.setItem('registerBaseData',JSON.stringify(row))
+				// this.$router.push({
+				// 	name: 'inspect',
+				// 	params:row
+				// })
 			},
 		},
 		watch: {
