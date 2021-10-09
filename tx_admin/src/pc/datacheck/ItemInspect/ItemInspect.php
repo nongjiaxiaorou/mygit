@@ -117,7 +117,7 @@
 		break;
 		//获取分部工程
 		case 'getItem':
-			$sql = "SELECT * FROM tb_system_standard1 WHERE measurementType='检查验收' GROUP BY inspectionItem";
+			$sql = "SELECT * FROM tb_system_standard1 WHERE measurementType='检查验收' GROUP BY inspectItem";
 			$result = $conn->query($sql);
 			if($result->num_rows>0)	{
 				$res = array();
