@@ -47,6 +47,7 @@ export default {
 			}
 		});
 		that.$on('cardId', (res) => {
+			console.log(res);
 			this.cardId.push(res)
 		})
 	},

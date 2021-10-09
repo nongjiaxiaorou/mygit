@@ -34,6 +34,16 @@
 		    if($result1->num_rows>0){
 			 	while($row1 = $result1->fetch_assoc()){
 					$measurePointName = $row1["inspectContent"];
+					// 查出该测点类型未布点数
+					if($pointStatus=="初测"){
+						$sqli = "SELECT measurePointName,measurePointNumber,id FROM `tb_measure_measurepoint` WHERE `pointInitialStatus`='不合格' AND `projectId`='$projectId' AND `measureId`='$measureId' AND `measurePointName`='$measurePointName ' AND `status`='$pointStatus' AND NOT EXISTS ( SELECT * FROM `tb_measure_pointinfo` WHERE `tb_measure_measurepoint`.measurePointNumber = `tb_measure_pointinfo`.number AND `measureId`='$measureId')";
+					}else if($pointStatus=="复测"){
+						$sqli = "SELECT measurePointName,measurePointNumber,id FROM `tb_measure_measurepoint` WHERE `pointRetestStatus`='不合格' AND `projectId`='$projectId' AND `measureId`='$measureId' AND `measurePointName`='$measurePointName ' AND `status`='$pointStatus' AND NOT EXISTS ( SELECT * FROM `tb_measure_pointinfo` WHERE `tb_measure_measurepoint`.measurePointNumber = `tb_measure_pointinfo`.number AND `measureId`='$measureId')";
+					}else if($pointStatus=="终测"){
+						$sqli = "SELECT measurePointName,measurePointNumber,id FROM `tb_measure_measurepoint` WHERE `finaltestStatus`='不合格' AND `projectId`='$projectId' AND `measureId`='$measureId' AND `measurePointName`='$measurePointName ' AND `status`='$pointStatus' AND NOT EXISTS ( SELECT * FROM `tb_measure_pointinfo` WHERE `tb_measure_measurepoint`.measurePointNumber = `tb_measure_pointinfo`.number AND `measureId`='$measureId')";
+					}
+					$resulti = $conn->query($sqli);
+					$resData['notPutNum'] = $resulti->num_rows;
 					$j=0;
 					$children = array();
 					$data['pointStatus'] = $pointStatus;
@@ -49,7 +59,7 @@
 							$row2 = $result2 ->fetch_assoc();
 							$unQualifiedNum = $row2["unQualifiedNum"];
 						}
-						$resData['sql'] = $sql4;
+						// $resData['sql'] = $sql4;
 						while($row4 = $result4 ->fetch_assoc()){
 							$children[$j]['number'] = $row4['measurePointNumber'];
 							$children[$j]['initTestVal'] = $row4['pointInitialValue']=='' ? null : $row4['pointInitialValue'];
@@ -129,7 +139,7 @@
 					$row5 = $result5 ->fetch_assoc();
 					$row6 = $result6 ->fetch_assoc();
 					$resData['id'] = $row1['id'];
-					$resData['measureType'] = $row1['inspectContent'];
+					$resData['measureType'] = $row1['inspectContent']; 
 					$resData['qualifiedBadge'] = $qualifiedNum;
 					$resData['unQualifiedBadge'] = $unQualifiedNum;
 					$resData['range'] = "[".$row1['minStandardValue'].",".$row1['maxStandardValue']."]";
@@ -266,6 +276,7 @@
 			$pointStatus = isset($_POST["pointStatus"]) ? $_POST["pointStatus"] : '';
 			$number = isset($_POST["number"]) ? $_POST["number"] : '';
 			$missItem = isset($_POST["missItem"]) ? $_POST["missItem"] : '';
+			$totalNumOld = isset($_POST["totalNumOld"]) ? $_POST["totalNumOld"] : '';
 			$data['missItem'] = $missItem;
 			$time=date("Y-m-d H:i:s");
 			if($missItem == 'true') {
@@ -285,10 +296,11 @@
 				$unQualifiedStr = join(",", $unQualifiedArr);
 				$sql = "INSERT INTO tb_measure_measurepoint (measureId,projectId,measurePointName,measurePointNumber,pointInitialValue,pointInitialStatus,status,createTime,missItem) VALUES $unQualifiedStr";
 				$result = $conn->query($sql);
-				$j=$i;
 				$qualifiedNum=intval($qualifiedNum);
+				$j= $totalNumOld + $i + 1;
 				for($i=0;$i<$qualifiedNum;$i++){ 
 					$num = $number.$j;
+					$res['number'][$i] = $num;
 					$qualifiedArr[$i] = "('$measureId','$projectId','$measureType','$num','hg','合格','$pointStatus','$time','false')";
 					$j++;
 				}
@@ -464,14 +476,23 @@
 				
 			}
 		break;
-		case 'savePrimaryPicSrc':
+		case 'savePicSrc':
+			require('../../../../base64ToPicFile.php');
 			$measureId = isset($_POST["measureId"]) ? $_POST["measureId"] : '';
-			$picSrc = isset($_POST["picSrc"]) ? $_POST["picSrc"] : '';
-			$data['pic'] = $picSrc;
-			// $data['dad'] = 123;
+			$pointStatus = isset($_POST["status"]) ? $_POST["status"] : '';
+			// $picSrc = isset($_POST["picSrc"]) ? $_POST["picSrc"] : '';
+			// $data['pic'] = $picSrc;
+			$data['img'] = $img;
+			// $data['mkdir'] = mkdir('testing',0777,true);
 			// $picSrc = base64decode($picSrc);
-			$sqli = "UPDATE `tb_inspectaccept_measure` SET `primaryMeasurePic`= '$picSrc' WHERE `id`= '$measureId' ";
-			$result = $conn->query($sqli);		
+			if ($pointStatus == '初测') {
+				$sqli = "UPDATE `tb_inspectaccept_measure` SET `primaryMeasurePic`= '$img' WHERE `id`= '$measureId' ";
+				$result = $conn->query($sqli);	
+			} else {
+				$sqli = "UPDATE `tb_inspectaccept_measure` SET `measurePointPic`= '$img' WHERE `id`= '$measureId' ";
+				$result = $conn->query($sqli);	
+			}
+				
 		    if($result)	{
 		    }else {
 				$data['code'] = 0;				
@@ -495,7 +516,7 @@
 			$data['putPointNum'] = $putPointNum;
 			$data['notPointNum'] = $AllPointNum - $putPointNum;
 			if($result->num_rows>0){
-				$i = 0;
+				$i = 0; 
 				while ($row = $result -> fetch_assoc()) {
 					$measurePointType = $row['measurePointType'];
 					$sql1 = "SELECT number FROM `tb_measure_standard` WHERE `inspectContent` =  '$measurePointType'";
@@ -532,27 +553,7 @@
 				$data['code'] = 0;
 			}
 		break;
-		case 'clearPoint':
-			$measureId = isset($_POST["measureId"]) ? $_POST["measureId"] : '';
-			$items = isset($_POST["items"]) ? $_POST["items"] : '';
-			$items = json_decode($items);
-			$Length = sizeof($items);
-			$measureType = isset($_POST["measureType"]) ? $_POST["measureType"] : '';
-			for ($i=0; $i<$Length; $i++) {
-				$checked = $items[$i]->checked;
-				if ($checked == true) {
-					$number = $items[$i]->num;
-					$data['number'] = $number;
-					$sql = "DELETE FROM `tb_measure_pointinfo` WHERE `measureId` = '$measureId' AND `number` = '$number' AND `measurePointType` = '$measureType' ";
-					$result = $conn->query($sql);		
-					if($result)	{
-					}else {
-						$data['code'] = 0;				
-					}
-				}
-			}
-			
-		break;
+		
 	}
 	$json = json_encode($data);
 	echo $json;

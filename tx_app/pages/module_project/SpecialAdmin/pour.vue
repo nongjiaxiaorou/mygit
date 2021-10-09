@@ -518,6 +518,7 @@ export default {
 		//浇筑令悬浮按钮
 		trigger(e) {
 			let indexOf = e.index;
+			console.log(e);
 			if (indexOf != '0') {
 				var that = this;
 				// 循环遍历ID
@@ -540,8 +541,8 @@ export default {
 			switch (indexOf) {
 				case 0: //新建
 					uni.navigateTo({
-						url: 'Create_pour'
-					});
+						url: './create_pour'
+					}); 
 					break;
 				case 1: //下发
 					this.$refs.select_person.toggle('bottom') // 直接调用子组件方法

@@ -2,7 +2,7 @@
 	<view>
 		<!-- 自定义导航栏 -->
 		<view class="status_bar" :style="{height:height+'px'}"></view>
-		<uni-nav-bar right-icon="map" :title="projectName" @clickRight="changeProject"></uni-nav-bar>
+		<uni-nav-bar right-icon="map" :title="companyPro" @clickRight="changeProject"></uni-nav-bar>
 		<!-- 部门公告 -->
 		<view v-show="isShow">
 			<!-- 公司层级 -->
@@ -25,6 +25,7 @@
 				<text>非正常验收通过率80%</text>
 			</view>
 		</view>
+		
 		<!-- 导航栏滚动 -->
 		<scroll></scroll>
 		<!-- 公司层级功能模块 -->
@@ -54,6 +55,7 @@
 			return {
 				projectName: '',
 				projectNum: '',
+				companyPro: '',
 				level: '', //总公司层级/分公司层级/项目层级
 				isShow: Boolean,
 				isShowComView: Boolean,
@@ -70,7 +72,10 @@
 			// 获取手机状态栏高度
 			uni.getSystemInfo({
 				success: function(data) {
-					// 将其赋值给this
+					// ifios
+					// console.log('iflos');
+					// var currentWebview = this.$scope.$getAppWebview()
+					// 将其赋值给this 
 					_this.height = data.statusBarHeight;
 					_this.height1 = (data.windowHeight-140-100)//屏幕高度减去模块140-滚动指标100
 					//公司层级设定高度
@@ -104,13 +109,14 @@
 				// console.log(res)
 				this.projectName = res.projectName
 				// console.log(this.projectName)
+				this.companyPro = res.companyName + '/' + res.projectName
 				this.projectId = res.projectId //工程id
 				this.isShow = res.isShow
 				this.userInfo['projectName'] = res.projectName
 				this.userInfo['projectId'] = res.projectId //工程id
 				this.userInfo['proTimeStamp'] = res.proTimeStamp //工程时间戳
 				this.userInfo['database'] = res.database //工程时间戳
-				console.log(this.userInfo)
+				// console.log(this.userInfo)
 				uni.setStorage({
 					key: 'userInfo',
 					data: this.userInfo
@@ -168,7 +174,7 @@
 
 					this.projectNum = res.data.projectNum
 					this.level = res.data.data.split('|')[0]
-					this.projectName = res.data.data.split('|')[1]
+					this.companyPro = res.data.data.split('|')[1]
 					this.userInfo['level'] = res.data.data.split('|')[0]
 					// console.log(this.userInfo)
 					if (this.level == '总公司' || this.level == '分公司') {

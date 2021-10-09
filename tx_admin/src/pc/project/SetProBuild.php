@@ -31,8 +31,10 @@
 		//获取栋号
 		case 'getBuild':
 			$section = isset($_POST["section"])?$_POST["section"]:'';
+			$projectName = isset($_POST["projectName"])?$_POST["projectName"]:'';
+			$timeStamp = isset($_POST["timeStamp"])?$_POST["timeStamp"]:'';
 
-			$sql = "SELECT * FROM tb_project_floor_information WHERE section = '$section' ORDER BY id ASC";
+			$sql = "SELECT * FROM tb_project_floor_information WHERE section = '$section' AND projectName = '$projectName' AND timeStamp = '$timeStamp' ORDER BY id ASC";
 			$result = $conn -> query($sql);
 			$resData = array();
 			if ($result -> num_rows > 0) {
@@ -122,7 +124,9 @@
 				$undergroundNumber = $buildInfo->undergroundNumber;
 				$abovegroundNumber = $buildInfo->abovegroundNumber;
 				$category = $buildInfo->category;
-				$sql = "UPDATE tb_project_floor_information SET build = '$build',undergroundNumber = '$undergroundNumber',abovegroundNumber = '$abovegroundNumber',category = '$category[0]' WHERE id = '$buildId'";
+				$json = json_encode($category);
+				echo $json;
+				$sql = "UPDATE tb_project_floor_information SET build = '$build',undergroundNumber = '$undergroundNumber',abovegroundNumber = '$abovegroundNumber',category = '$category' WHERE id = '$buildId'";
 				$result = $conn -> query($sql);
 			}
 			$conn -> close();

@@ -216,7 +216,9 @@
 		onLoad(option) {
 			that = this
 			this.cardParam = JSON.parse(option.cardParam)
+			console.log(this.cardParam)
 			this.currentData = JSON.parse(option.currentData)
+			console.log(this.currentData)
 		},
 		onShow() {
 			uni.$on('updateCardData',res=>{
@@ -570,6 +572,7 @@
 				this.draftCardList = []
 				this.draftNum = 0
 				let buildSelData = JSON.stringify(this.buildSelData)
+				console.log(this.api)
 				let opts = {
 					url: this.api+'/module_project/InspectAccept/InspectAccept.php',
 					method: 'POST'
@@ -677,13 +680,24 @@
 			toViolationInvestigation(item) {
 				let cardParam = JSON.stringify(this.cardParam)
 				let inspectCardParam = JSON.stringify(item)
+				console.log(cardParam)
+				console.log(inspectCardParam)
 				uni.navigateTo({
-					url:`ViolationInvestigation?currentData=${this.currentData}`+`&cardParam=${cardParam}`+`&inspectCardParam=${inspectCardParam}`+`&enterFlag=normal`
+					url:`ViolationInvestigation?currentData=${this.currentData}`+`&cardParam=${cardParam}`+`&inspectCardParam=${inspectCardParam}`+`&enterFlag=normal`,
+					// success: function () {
+					// 	console.log(1111)
+					// },
+					// fail: function (e) {
+					// 	console.log(222)
+					// }
 				})
+				// uni.redirectTo({})
+				console.log(11)
 			},
 			//下发函数
 			completePush(){
-				this.getDraftCardFunc()
+				console.log(111);
+				this.getDraftCardFunc() 
 				this.getRectificationCardFunc()
 				this.getClosedCardFunc()
 			},

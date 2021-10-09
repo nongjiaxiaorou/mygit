@@ -143,7 +143,7 @@
 					key: 'changeProRecord',
 					success: function (res) {
 						that.projectInfo = res.data
-						// console.log(res.data)
+						console.log(res.data)
 					}
 				});
 			},
@@ -163,7 +163,7 @@
 				}
 				let isLoading = false
 				this.myRequest.httpRequest(opts,param,isLoading).then(res=>{
-					// console.log(res.data)
+					console.log(res.data)
 					this.commonlyItemList = []
 					this.majorItemList = []
 					if(res.data.data.commonlyQuestion!=undefined){
@@ -187,7 +187,7 @@
 					this.checkedFunc()
 					
 					if(this.pageFrom=='notice'){//从缺陷详情处进入是为了直接新增违章条目，所以应去除之前新增通知单时所选的违章条目
-					// console.log(this.formData.majorCate)
+					console.log(this.formData.majorCate)
 						for(let i=0;i<this.violationItem.length;i++){
 							for (let j=0; j<this.commonlyItemList.length; j++){
 								if(this.commonlyItemList[j].value==this.violationItem[i]){

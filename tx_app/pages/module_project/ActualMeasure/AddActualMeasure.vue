@@ -30,8 +30,8 @@
 							检查项目：
 						</view>
 						<view class="uni-list-cell-db">
-							<picker @change="inspectItemChange" :value="itemIndex" :range="inspectProArr" range-key="inspectionItem">
-								<view class="uni-input">{{inspectProArr[itemIndex].inspectionItem}}</view>
+							<picker @change="inspectItemChange" :value="itemIndex" :range="inspectProArr" range-key="inspectItem">
+								<view class="uni-input">{{inspectProArr[itemIndex]}}</view>
 								<!-- <view  v-if="categoryArr[index]=='建筑工程'" class="uni-input">{{inspectProArr[itemIndex].inspectionItem}}</view>
 								<view v-if="categoryArr[index]=='装修工程'" class="uni-input">{{inspectProArr[itemIndex].inspectionItem}}</view> -->
 							</picker>
@@ -102,7 +102,7 @@ export default {
 			},
 			categoryArr: ['建筑工程', '装修工程'],
 			index: 0,
-			inspectProArr: [{id:'',inspectionItem:''}],
+			inspectProArr: [],
 			itemIndex: 0,
 			currentData:[],
 			buildSelData: {},
@@ -111,18 +111,24 @@ export default {
 		};
 	}, 
 	onLoad:function(option) {
-		this.currentData = JSON.parse(option.currentData)
-		// console.log(this.currentData)
-		// this.incompleteCardList = JSON.parse(option.incompleteCardList) // 已创建的卡片项目
-		// console.log(typeof(this.incompleteCardList))
-		// console.log(this.incompleteCardList)
+		const that = this;
+		that.currentData = JSON.parse(option.currentData);
+		// console.log(that.currentData);
+		this.incompleteCardList = JSON.parse(option.incompleteCardList) // 已创建的卡片项目
+		// console.log(this.incompleteCardList);
+		// uni.getStorage({
+		// 	key: 'incompleteCardList',
+		// 	success:function(res){
+		// 		that.incompleteCardList = res.data // 已创建的卡片项目
+		// 		console.log(res.data);
+		// 	}
+		// })
 	},
 	mounted() {
 		let that = this
 		this.getStoragedata()
 		setTimeout(function(){
 			let data = that.categoryArr[that.index]
-			console.log(that.incompleteCardList)
 			that.getNewCardDataFunc(data)
 		},200)
 		
@@ -146,7 +152,7 @@ export default {
 		inspectItemChange(e) {
 			this.itemIndex = e.target.value
 			// console.log(222)
-			// console.log(this.itemIndex)
+			console.log(this.inspectProArr)
 		},
 		getNewCardDataFunc(data) {
 			const that = this;
@@ -173,26 +179,24 @@ export default {
 				// console.log(res)
 				if(res.data.code){
 					that.inspectProArr = res.data.data
-					// this.inspectProArr = toString(res.data.data)
-					// console.log(res.data.data)
-					// console.log(that.incompleteCardList)
-					// console.log(that.inspectProArr)
 					const oldProArr = that.incompleteCardList;
-					console.log(oldProArr)
+					// console.log(oldProArr)
+					// console.log(that.inspectProArr)
 					let temp1 = that.inspectProArr;
-					let temp2 = that.inspectProArr;;
+					let temp2 = that.inspectProArr;
 					if (data == '建筑工程') {
 						if (oldProArr.length != 0) {
 							for (let i = 0; i < oldProArr.length; i++) { // 循环历遍上个页面的工程, 把已经创建的工程在这个页面不不显示
 								// console.log(oldProArr[i].projectCategory)
 								if (oldProArr[i].projectCategory == '建筑工程') {
 									for (let j = 0; j < that.inspectProArr.length; j++ ) {
-										if (oldProArr[i].inspectItem == that.inspectProArr[j].inspectionItem){
-											temp1.splice(j,1)
+										if (oldProArr[i].inspectItem == that.inspectProArr[j]){
+											temp1.splice(j,1);
 										}
 									}
 								}
-							}
+							}							
+							// console.log(temp1);
 							that.inspectProArr = temp1;
 						}
 					} else {
@@ -201,40 +205,19 @@ export default {
 							for (let i = 0; i < oldProArr.length; i++) {
 								if (oldProArr[i].projectCategory == '装修工程') {
 									 for (let j = 0; j < that.inspectProArr.length; j++ ) {
-									 	if (oldProArr[i].inspectItem == that.inspectProArr[j].inspectionItem){
+									 	if (oldProArr[i].inspectItem == that.inspectProArr[j]){
 									 		temp2.splice(j,1)
 									 	}
 									 }
 								}
 							}
+							console.log(temp2);
 							that.inspectProArr = temp2;
 						}
 					}
+					// console.log(that.inspectProArr);
 					
 					
-					// this.inspectProArr = JSON.parse(this.inspectProArr)
-					// let inspectProTemp = [];
-					// for (let i = 0; i < that.incompleteCardList.length; i++) {
-					// 	for (let j = 0; j < that.inspectProArr.length; j++) {
-					// 		if (that.inspectProArr[j].inspectionItem != that.incompleteCardList[i].inspectItem){
-					// 			//that.inspectProArr.splice(j,1);
-					// 			// inspectProTemp.push(that.inspectProArr[j]);
-					// 		}
-					// 	}				
-					// }
-					// that.inspectProArr = inspectProTemp;
-					
-					// let arrPorInspect = [];
-					// for (let i = 0; i < that.incompleteCardList.length; i++) {
-					// 	const data = that.incompleteCardList[i].inspectItem;
-					// 	const index =  that.inspectProArr.indexOf(data);
-					// 	console.log(index)
-					// 	// that.inspectProArr.splice(index,1);
-						
-					// }
-					
-					// console.log(that.inspectProArr)
-					// this.createFloorFunc(res.data.data)
 				}
 			}, error => {
 				console.log(error);
@@ -256,17 +239,11 @@ export default {
 					// console.log(res.data)
 				}
 			});
-			uni.getStorage({
-				key: 'incompleteCardList',
-				success:function(res){
-					that.incompleteCardList = res.data // 已创建的卡片项目
-				}
-			})
-		},
-		confirm() {
 			
+		},
+		confirm() {		
 			let projectType = this.categoryArr[this.index]
-			let inspectItem = this.inspectProArr[this.itemIndex].inspectionItem
+			let inspectItem = this.inspectProArr[this.itemIndex]
 			let proTimeStamp = this.projectInfo.proTimeStamp
 			let buildInfo = JSON.stringify(this.buildSelData)
 			let inputValue = JSON.stringify(this.formData)
@@ -286,6 +263,7 @@ export default {
 				createUserId: this.currentData.userId,
 				projectName: projectName
 			}
+			console.log(param)
 			let isLoading = true//是否需要加载动画
 			this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 				// console.log(res.data)

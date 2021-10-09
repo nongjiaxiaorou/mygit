@@ -55,9 +55,7 @@
 			this.projectId = JSON.parse(option.projectId)
 		},
 		created () {
-			this.getPointStatus()
-			this.getPointArr()
-			
+			this.getPointStatus();
 		},
 		methods: {
 			getPointStatus() {

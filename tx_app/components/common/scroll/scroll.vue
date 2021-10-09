@@ -28,7 +28,7 @@
 		},
 		mounted() {
 			uni.$on("scrolldata", res => {
-				console.log(res);
+				// console.log(res);
 				this.getscrolldata(res)
 				uni.$off('scrolldata');
 			})
@@ -78,9 +78,9 @@
 				}
 				let isLoading = true //是否需要加载动画
 				this.myRequest.httpRequest(opts, param, isLoading).then(res => {
-					console.log(res);
+					// console.log(res);
 					const data = JSON.parse(res.data)
-					console.log(data);
+					// console.log(data);
 					for(let key in data){
 						let num = data[key].split("|");
 						this.tabBars.forEach(item => {

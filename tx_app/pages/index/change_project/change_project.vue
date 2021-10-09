@@ -46,7 +46,7 @@
 							</view>
 						</view>
 						<lb-picker ref="picker2" v-model="value2" mode="multiSelector" :list="list2" :level="2" :dataset="{ name: 'label2' }"
-						 :formatter="formatter" @change="handleChange2" @confirm="handleConfirm" @cancel="handleCancel">
+						 :formatter="formatter" @change="handleChange2" @confirm="handleConfirm2" @cancel="handleCancel2">
 						</lb-picker>
 					</view>
 				</view>
@@ -69,7 +69,7 @@
 							</view>
 						</view>
 						<lb-picker ref="picker3" v-model="value3" mode="multiSelector" :list="list3" :level="2" :dataset="{ name: 'label3' }"
-						 :formatter="formatter" @change="handleChange3" @confirm="handleConfirm" @cancel="handleCancel">
+						 :formatter="formatter" @change="handleChange3" @confirm="handleConfirm3" @cancel="handleCancel3">
 						</lb-picker>
 					</view>
 				</view>
@@ -91,7 +91,7 @@
 	        return {
 	            companyList: ['选择分公司'],
 	            companyIndex: 0,
-				projectNameList: [],
+				projectNameList: ['请选择项目'],
 				projectList:[],
 				projectIndex: 0,
 				isshow:Boolean,
@@ -114,26 +114,29 @@
 	        }
 	    },
 		watch:{
-			companyList:'getComProject'
+			// companyList:'getComProject'
 		},
 		mounted() {
+			console.log(111);
 			this.getCompany()
         },
 		onReady() {
+			console.log(222);
 			this.$nextTick(() => {
 				// 此处可以调用getColumnsInfo方法获取默认值的选项信息
 				console.log(this.value2)
 				const info2 = this.$refs.picker2.getColumnsInfo(this.value2)
 				const info3 = this.$refs.picker3.getColumnsInfo(this.value3)
 				console.log(info2)
-				console.log(info3)
+				console.log(info3) 
 				this.label2 = info2.item.map(m => m.label).join('-')
 				this.label3 = info3.item.map(m => m.label).join('-')
 				console.log(this.label2)
 			})
 		},
 		onLoad: function(option){
-			if(option.isShowComView==='false'){
+			console.log(333);
+			if(option.isShowComView==='false'){ // 判断是否为项目层级
 				this.isshow = false
 			}else{
 				this.isshow = true
@@ -150,7 +153,7 @@
 						this.requestFlag = 'getProject'//直接账号所在获取工程
 						this.getProject()
 					}
-					
+					 
 					this.userInfo = res.data
 					this.level = res.data.level
 					this.projectName = res.data.projectName
@@ -192,6 +195,7 @@
 				return `${item.value}`
 			},
 			getCompany(){
+				const that = this;
 				if(this.level==='分公司'){
 					this.companyName = this.userInfo.companyName
 					this.companyList.push(this.companyName)
@@ -245,10 +249,10 @@
 						console.log(res.data);
 						let length = res.data.data.length
 						let data = this.commonFunc.Es5duplicate(res.data.data,'projectName')
-						this.projectNameList = ['']
+						// this.projectNameList = ['']
 						this.projectList = ['']
 						if(length>=1){
-							for(var i =0;i<length;i++){
+							for(var i =0;i<length;i++){ 
 								this.projectNameList.push(data[i].projectName)
 								this.projectList.push({
 									projectId:data[i].projectId,
@@ -364,6 +368,7 @@
 			//选择分公司
 			pickCompany: function(e) {
 			    this.companyIndex = e.target.value
+				// console.log(this.companyIndex);
 				this.companyName = this.companyList[this.companyIndex]//获取选择的分公司
 				this.getComProject()
 			},
@@ -371,13 +376,16 @@
 			pickProject: function(e){
 				this.isSelectPro = true
 				this.projectIndex = e.target.value
+				console.log(this.projectNameList);
 				this.projectName = this.projectNameList[this.projectIndex]//获取选择的工程名称
 				this.projectId = this.projectList[this.projectIndex].projectId//获取选择的工程id
 				this.database = this.projectList[this.projectIndex].database//获取选择的工程违章数据库
 				this.proTimeStamp = this.projectList[this.projectIndex].proTimeStamp//获取选择的工程时间戳
 				this.getBuildInfo()
 			},
-			handleChange2(e) {
+			handleChange2(e) {},
+			handleChange3(e) {},
+			handleConfirm2(e) {
 				this.label2 = e.value[0] + "-" + e.value[1]
 				console.log(this.label2)
 				//根据栋号异步获取楼层单元
@@ -395,11 +403,12 @@
 					console.log(res)
 					let unitName = res.data.unitName[0].split('||')
 					let undergroundNumber = res.data.undergroundNumber
-					let abovegroundNumber = res.data.abovegroundNumber
+					let abovegroundNumber = res.data.abovegroundNumber 
 					// console.log(undergroundNumber+" "+abovegroundNumber+" "+unitName.split('||'))
 					let floorArr = this.commonFunc.toChinesNum_floor(undergroundNumber, abovegroundNumber)
 					let unitArr = unitName
-					let child_arry = []
+					let child_arry = [];
+					let list3 = [];
 					for (let i = 0; i < floorArr.length; i++) {
 						child_arry = []
 						for (let j = 0; j < unitArr.length; j++) {
@@ -408,38 +417,49 @@
 								label: unitArr[j]
 							})
 						}
-						this.list3.push({
+						// list3 = [];
+						list3.push({
 							value: floorArr[i],
 							label: floorArr[i],
 							children: child_arry,
 						})
 					}
+					console.log(list3)
+					this.list3 = list3;
 				}, error => {
 					console.log(error);
 				})
 			},
-			handleChange3(e) {
+			handleConfirm3(e) {
 				this.label3 = e.value[0] + "-" + e.value[1]
 				console.log('change::', e.value)
 			},
-			handleConfirm(e) {},
-			handleCancel(e) {
+			handleCancel2(e) {
+				this.label2 = '';
+				this.value2 = [];
+				console.log('cancel::', e)
+			},
+			handleCancel3(e) {
+				this.label3 = '';
+				this.value3 = [];
 				console.log('cancel::', e)
 			},
 			//确定提交
 			submint(){
 				if(!this.isSelectPro){
 					console.log("ss")
-					this.projectName = this.projectNameList[0]//获取选择的工程名称
+					this.companyName = this.companyList[this.companyIndex];
+					this.projectName = ''//获取选择的工程名称
 					this.projectId = this.projectList[0].projectId//获取选择的工程id
 					this.database = this.projectList[0].database//获取选择的工程违章数据库
 					this.proTimeStamp = this.projectList[0].proTimeStamp//获取选择的工程时间戳
 					this.companyName = this.projectList[0].companyName//获取选择的公司名称
 				}
-				console.log('database:'+this.database+" "+'projectId:'+this.projectId+" "+'companyName'+this.companyName)
+				// console.log('database:'+this.database+" "+'projectId:'+this.projectId+" "+'companyName'+this.companyName)
 				uni.setStorage({
 					key:'changeProRecord',
 					data: {
+						companyName:this.companyName,
 						projectName: this.projectName,
 						projectId:this.projectId,
 						companyName:this.companyName,

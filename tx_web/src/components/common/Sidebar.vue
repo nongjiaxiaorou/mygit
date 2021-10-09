@@ -132,14 +132,6 @@
 
                         ]
                     },
-                    // {
-                    //     index: 'test',
-                    //     title: '测试'
-                    // },
-                    // {
-                    //     index: 'information',
-                    //     title: '测试1'
-                    // }
                 ]
             };
         },

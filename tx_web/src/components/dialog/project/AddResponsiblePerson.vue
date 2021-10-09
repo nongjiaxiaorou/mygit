@@ -247,7 +247,7 @@ import {$EventBus} from "./QualityInspection/event-bus.js";
 				that.$axios.post(that.$adminUrl +`/project/projectManagement.php`,fd).then(res => {
 					console.log(res.data.data)
 					this.leaderNodeList[0].nodeValue = []
-
+					console.log(this.nodeList);
 					for(var i = 0;i<this.nodeList.length;i++){						
 						for(var a = 0;a<this.qualityOptions.length;a++){
 							this.qualityOptions[a].nodeValue = []

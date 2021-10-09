@@ -31,7 +31,7 @@
 						</view>
 						<view class="uni-list-cell-db">
 							<picker @change="inspectItemChange" :value="itemIndex" :range="inspectProArr" range-key="inspectionItem">
-								<view class="uni-input">{{inspectProArr[itemIndex].inspectionItem}}</view>
+								<view class="uni-input">{{inspectProArr[itemIndex]}}</view>
 							</picker>
 						</view>
 					</view>
@@ -116,7 +116,8 @@ export default {
 			},
 			categoryArr: ['建筑工程', '装修工程'],
 			index: 0,
-			inspectProArr: [{id:'',inspectionItem:''}],
+			// inspectProArr: [{id:'',inspectItem:''}],
+			inspectProArr: [],
 			itemIndex: 0,
 			currentData:[],
 			buildSelData: {},
@@ -127,7 +128,7 @@ export default {
 	}, 
 	onLoad:function(option) {
 		this.currentData = JSON.parse(option.currentData)
-		// console.log(this.currentData)
+		console.log(this.currentData)
 	},
 	mounted() {
 		let that = this
@@ -155,6 +156,7 @@ export default {
 		},
 		inspectItemChange(e) {
 			this.itemIndex = e.target.value
+			console.log(this.itemIndex);
 		},
 		getNewCardDataFunc(data) {
 			this.formData.titleName = this.buildSelData.build +'-'+ this.buildSelData.floor +'-'+ this.buildSelData.unit
@@ -177,7 +179,7 @@ export default {
 				// console.log(res.data)
 				uni.hideLoading()//隐藏加载中转圈圈
 				this.isloading = false//取消遮罩层
-				// console.log(res.data)
+				console.log(res.data)
 				if(res.data.code){
 					this.inspectProArr = res.data.data
 					// this.createFloorFunc(res.data.data)
@@ -229,7 +231,7 @@ export default {
 		confirm() {
 			
 			let projectType = this.categoryArr[this.index]
-			let inspectItem = this.inspectProArr[this.itemIndex].inspectionItem
+			let inspectItem = this.inspectProArr[this.itemIndex]
 			let substractor = this.subcontractorArr[this.subIndex].subcontractor
 			let proTimeStamp = this.projectInfo.proTimeStamp
 			let buildInfo = JSON.stringify(this.buildSelData)

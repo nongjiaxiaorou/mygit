@@ -8,7 +8,7 @@
 	if (!file_exists($fileName)) {
 		exit("文件" . $fileName . "不存在");
 	}
-	date_default_timezone_set('PRC'); //东八时区 
+	
 	$startTime = time();
 	//返回当前时间的Unix 时间戳
 	require_once '../PHPExcel-1.8/Classes/PHPExcel/IOFactory.php';
@@ -66,7 +66,7 @@
 			for ($row = 2; $row <= $rowCount; $row++) {
 				//列数循环 , 列数是以A列开始
 				for ($column = 'A'; $column <= $columnCount; $column++) {
-					// $dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
+					$dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
 					$array[$column . $row] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
 				}
 			}
@@ -103,50 +103,44 @@
 				}
 			}
 			unlink($fileName);//删除文件
-		break;
-		case 'saveProZone':
-			for ($row = 2; $row <= $rowCount; $row++) {
-				//列数循环 , 列数是以A列开始
-				for ($column = 'A'; $column <= $columnCount; $column++) {
-					// $dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
-					$array[$column . $row] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
-				}
-			}
-//			print_r($dataArr);
-			$projectName = $array["A" . 2];
-			$sql = "SELECT `timeStamp` from `tb_project_floor_information` WHERE `projectName` = '$projectName'";
-			$result = $conn->query($sql);
-			$row = $result->fetch_assoc();
-			$proTimeStamp = $row['timeStamp'];
-			for ($i = 2; $i <= $rowCount; $i++) {
-				$projectName = "A" . $i;
-				$projectName = $array[$projectName];
-				$section="B" . $i;
-				$section = $array[$section];
-				$category ="C" . $i;
-				$category = $array[$category];
-				$build = "D" . $i;
-				$build = $array[$build];
-				$unitNum = "E" . $i;
-				$unitNum= $array[$unitNum];
-				$unitName = "F" . $i;
-				$unitName= $array[$unitName];
-				$underGroundNumber = "G" . $i;
-				$underGroundNumber = $array[$underGroundNumber];
-				$aboveGroundNumber = "H" . $i;
-				$aboveGroundNumber = $array[$aboveGroundNumber];
-				if ($projectName == "") {
-					break;
-				} else {
-					$sql = "INSERT INTO `tb_project_floor_information` SET `timeStamp`='$proTimeStamp',`projectName`='$projectName',`section`='$section',`category`='$category',`build`='$build',`unitNum`='$unitNum',`unitName`='$unitName',`undergroundNumber`='$underGroundNumber',`abovegroundNumber`='$aboveGroundNumber'";
-					$result = $conn -> query($sql);
-					// $query = mysqli_query(self::$conn,$sql)or die(mysqli_error(self::$conn));
-					// mysqli_fetch_array($query);
-				}
-				// echo json_encode($section);
-				// echo $section;
-			}
-			unlink($fileName);//删除文件
 			break;
+
+			//导入实测实量信息
+			case 'MeasuringPoint':
+				for ($row = 2; $row <= $rowCount; $row++) {
+					//列数循环 , 列数是以A列开始
+					for ($column = 'A'; $column <= $columnCount; $column++) {
+						$dataArr[] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
+						$array[$column . $row] = $objPHPExcel -> getActiveSheet() -> getCell($column . $row) -> getValue();
+					}
+				}
+				$id = isset($_POST["id"])?$_POST["id"] : '';
+				// print_r($dataArr);
+				for ($i = 2; $i <= $rowCount; $i++) {
+					$measurePointName = "A" . $i;
+					$measurePointName = $array[$measurePointName];
+					$measurePointNumber = "B" . $i;
+					$measurePointNumber = $array[$measurePointNumber];
+					$pointInitialValue = "C" . $i;
+					$pointInitialValue = $array[$pointInitialValue];
+					$pointInitialStatus = "D" . $i;
+					$pointInitialStatus = $array[$pointInitialStatus];
+					$pointRetestValue = "E" . $i;
+					$pointRetestValue = $array[$pointRetestValue];
+					$pointRetestStatus = "F" . $i;
+					$pointRetestStatus = $array[$pointRetestStatus];
+					$pointFinaltestValue = "G" . $i;
+					$pointFinaltestValue = $array[$pointFinaltestValue];
+					$finaltestStatus = "H" . $i;
+					$finaltestStatus = $array[$finaltestStatus];
+					
+					if ($measurePointName == "") {
+						break;
+					} else {						
+						$sql = "INSERT INTO tb_measure_measurepoint (measurePointName,measurePointNumber,pointInitialValue,pointInitialStatus,pointRetestValue,pointRetestStatus,pointFinaltestValue,finaltestStatus,measureId,status) VALUES ('$measurePointName','$measurePointNumber','$pointInitialValue','$pointInitialStatus','$pointRetestValue','$pointRetestStatus','$pointFinaltestValue','$finaltestStatus','$id','终测')";
+						$result = $conn -> query($sql);
+					}
+				}print_r($measurePointName);
+				unlink($fileName);//删除文件
 	}
 ?>

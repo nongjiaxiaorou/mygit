@@ -42,7 +42,9 @@
 			$result1 = $conn -> query($sql1);
 			$row1 = $result1->fetch_assoc();
 			$table_type = $row1["standard"];
-			$sql = "SELECT * FROM tb_system_standard1 WHERE `projectType`='$proCategory' AND measurementType='检查验收' GROUP BY inspectionItem";
+			$sql = "SELECT * FROM $table_type WHERE `projectCategory`='$proCategory' AND measurementType='检查验收' GROUP BY inspectItem";
+			// $sql = "SELECT * FROM $table_type WHERE `projectType`='$proCategory' AND measurementType='实测实量' GROUP BY inspectItem";
+			$data['sql'] = $sql;
 			$result = $conn -> query($sql);
 			$row1 = $result1->fetch_assoc();
 			$res = array();
@@ -50,9 +52,10 @@
             $i=0;
             if($result->num_rows>0)	{
         	 	while($row = $result->fetch_assoc()){
-        	 		$resData['id'] = $row['id'];
-					$resData['inspectionItem'] = $row['inspectionItem'];
-					$res[$i] = $resData;
+//      	 		$resData['id'] = $row['id'];
+//					$resData['inspectItem'] = $row['inspectItem'];
+//					$res[$i] = $resData;
+					$res[$i] = $row['inspectItem'];
 	                $i++;
 				}
 				$data['data'] = $res;

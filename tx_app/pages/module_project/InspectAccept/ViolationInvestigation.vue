@@ -90,7 +90,7 @@
 			previewImage: function(index,url) {
 				var imgArr = [];
 				imgArr.push(url);
-				// console.log(url)
+				console.log(url)
 				uni.previewImage({
 					current: index,
 					urls: imgArr,
@@ -136,6 +136,7 @@
 					flag: 'getViolationItem',
 					noticeTimeStamp: this.inspectCardParam.noticeTimeStamp
 				}
+				console.log(param)
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					console.log(res.data)
@@ -189,8 +190,10 @@
 			},
 			// 跳转到违章条目内容回复
 			ToViolationinReply(item) {
+				console.log(item);
 				let cardParam = JSON.stringify(this.cardParam)
 				let inspectCardParam = JSON.stringify(this.inspectCardParam)
+				console.log(inspectCardParam);
 				uni.navigateTo({
 					url:`ViolationReply?currentData=${this.currentData}`+`&cardParam=${cardParam}`+`&inspectCardParam=${inspectCardParam}`+`&violationId=${item.id}`
 				})

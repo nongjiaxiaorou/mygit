@@ -134,9 +134,9 @@
 			handleJump(index, row) {
 				//每次进入存储session值，以防子页面刷新数据丢失
 				console.log(row)
-				// sessionStorage.setItem('registerBaseData',JSON.stringify(row))
+				sessionStorage.setItem('registerBaseData',JSON.stringify(row))
 				this.$router.push({
-					name: 'inspect',
+					name: 'DetailedInspection',
 					params:row
 				})
 			},
@@ -153,11 +153,10 @@
 
 <style scoped>
 	.el-row {
-		margin-bottom: 20px;
-	
-		&:last-child {
-			margin-bottom: 0;
-		}
+		margin-bottom: 20px;	
+	}
+	.last-child {
+		margin-bottom: 0;
 	}
 	
 	.el-col {

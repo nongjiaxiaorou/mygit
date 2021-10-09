@@ -47,6 +47,7 @@ export default {
 			}
 		});
 		that.$on('cardTimeStamp', (res) => {
+			// console.log(res)
 			this.cardTimeStamp.push(res)
 		})
 	},
@@ -161,7 +162,7 @@ export default {
 			}
 			let isLoading = true//是否需要加载动画
 			this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-				// console.log(res)
+				console.log(res)
 				let data = res.data
 				uni.hideLoading()//隐藏加载中转圈圈
 				this.isloading = false//取消遮罩层

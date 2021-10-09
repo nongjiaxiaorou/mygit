@@ -35,6 +35,7 @@
 			</view>
 			<uni-icons v-if="showArrow || link" :size="16" class="uni-icon-wrapper" color="#bbb" type="arrowright" />
 		</view>
+		
 		<!-- #ifdef APP-NVUE -->
 	</cell>
 	<!-- #endif -->

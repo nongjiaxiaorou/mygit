@@ -14,7 +14,6 @@
 		<view v-show="Inv == 0">
 			<view class="example-body">
 				<view v-for="item in incompleteCardList" :key="item.id" class="example-box">
-					
 					<uni-card :is-shadow="true" :title="item.projectName">
 						<view class="content-box-text">
 							<view class="uni-list-cell uni-list-card">
@@ -213,6 +212,14 @@
 					uni.navigateTo({
 						url:`AddActualMeasure?currentData=${that.currentData}&incompleteCardList=${JSON.stringify(that.incompleteCardList)}`
 					})
+					// uni.setStorage({
+					// 	key: 'incompleteCardList',
+					// 	data: that.incompleteCardList
+					// })
+					// uni.$emit('jumpToAM',that.incompleteCardList)
+					// Vue.prototype.incompleteCardList = that.incompleteCardList;
+					// window.incompleteCardList = that.incompleteCardList;
+					// console.log(window.incompleteCardList)
 				}else if(indexOf==1){ //下发
 					this.incompleteCardList.forEach(item => {
 						if (item.checked == true) {
@@ -418,7 +425,7 @@
 					}
 					let isLoading = true//是否需要加载动画
 					this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-						console.log(res.data)
+						// console.log(res.data)
 						uni.hideLoading()//隐藏加载中转圈圈
 						this.isloading = false//取消遮罩层
 						// console.log(res.data)
@@ -452,11 +459,11 @@
 			},
 			// 遍历区段楼层并存储在数组中
 			createFloorFunc(data) {
-				console.log(data)
+				// console.log(data)
 				let buildData = data
-				console.log(this.commonFunc)
+				// console.log(this.commonFunc)
 				let sectionData = this.commonFunc.Es5duplicate(data,'section') // 去掉section值相等的对象
-				console.log(sectionData)
+				// console.log(sectionData)
 				let floorData = data
 				for(var i=0;i<sectionData.length;i++){
 					var obj = {
@@ -557,7 +564,7 @@
 					let buildData = this.commonFunc.Es5duplicate(this.treeArr[i].children,'name')
 					this.tree[i].children = buildData
 				}
-				console.log(this.tree)
+				// console.log(this.tree)
 			},
 			selDataFunc(data) {
 				// console.log(data)
@@ -588,10 +595,10 @@
 						// console.log(res.data)
 						this.incompleteNum = res.data.data.length
 						this.incompleteCardList = res.data.data
-						uni.setStorage({
-							key: 'incompleteCardList',
-							data: this.incompleteCardList
-						})
+						// uni.setStorage({
+						// 	key: 'incompleteCardList',
+						// 	data: this.incompleteCardList
+						// })
 						// this.createFloorFunc(res.data.data)
 					}
 				}, error => {

@@ -48,6 +48,7 @@
 
 			$sql = "SELECT * FROM tb_project_floor_information WHERE timeStamp = '$proTimeStamp' GROUP BY section ORDER BY id ASC";
 			$result = $conn -> query($sql);
+			$resData['getSection'] = $sql;
 			$resData = array();
 			if ($result -> num_rows > 0) {
 				$i=0;

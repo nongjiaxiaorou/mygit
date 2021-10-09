@@ -50,16 +50,11 @@
 						title: '数据统计',
 						url:'../../pages/module_project/DataStatistics/problems'
 					},
-					{
-						icon: '../../static/images/sjtj.png',
-						title: '测试模块',
-						url:'../../pages/module_project/WeeklyInspect/SelectItem'
-					},
-					{
-						icon: '../../static/images/sign.png',
-						title: 'test',
-						url:'../../pages/test'
-					}
+					// {
+					// 	icon: '../../static/images/sjtj.png',
+					// 	title: '测试模块',
+					// 	url:'../../pages/module_project/WeeklyInspect/SelectItem'
+					// },
 				],
 				modulePath:''
 			}
@@ -67,7 +62,7 @@
 		methods: {
 			//进入模块
 			onPress(e) {
-			    console.log(e)
+			    // console.log(e)
 				uni.getStorage({
 					key: 'buildInfo',
 					success:(res) => {//有缓存 直接跳转到对应模块路径

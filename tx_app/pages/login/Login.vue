@@ -61,6 +61,7 @@
 					});
 					return;
 				}
+				// alert(this.api)
 				uni.request({
 					url: this.api + '/login/login.php',
 					data: {

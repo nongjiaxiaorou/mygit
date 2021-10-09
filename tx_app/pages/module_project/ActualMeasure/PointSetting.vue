@@ -9,7 +9,7 @@
 			<uni-icons v-show="pointStatus=='复测'" class="icon-style" type="compose" size="20" style="position: absolute;right: 35rpx;" @click="modifyReTestValue"/>
 		</view>
 		<view class="container">
-			<view @touchmove="touchmove" @touchstart="touchmove">
+			<view @touchmove="touchmove" >
 			<!-- <view @click="touchmove" class='box1'> -->
 				<img ref="pic" :src="picSrc" hidden="hidden" id="pic"/>				
 				<canvas type="webgl" canvas-id="myCanvas"  disable-scroll="true" id="myCanvas" ref="myCanvas" class="my-canvas" :style="{width:canvasWidth +'px',height:canvasHeight +'px',margin:'0 0 0 50% ',left:'-170px'}"
@@ -43,7 +43,7 @@
 					<view class="uni-scroll-wrapper" data-scroll="10">
 						<view class="uni-scroll" style="transform: translate3d(0px, 0px, 0px) translateZ(0px);">
 							<ul class="uni-table-view">
-								<li v-for="(item,index) in pointArr" :key="index" class="uni-table-view-cell" @click="selectType(item)" v-show="item.missItem == null"><p>{{item.measureType}}</p></li>
+								<li v-for="(item,index) in pointArr" :key="index" class="uni-table-view-cell" @click="selectType(item)" v-show="item.missItem == null && item.children.length != 0"><p>{{item.measureType}}</p></li>
 							</ul> 
 						</view>  
 					<view class="uni-scrollbar mui-scrollbar-vertical"><view class="uni-scrollbar-indicator" style="transition-duration: 0ms; display: none; height: 8px; transform: translate3d(0px, -8px, 0px) translateZ(0px);"></view></view></view>
@@ -163,6 +163,7 @@
 	import uniCollapse from '@/components/uni-app/uni-collapse/uni-collapse.vue'
 	import uniCollapseItem from '@/components/uni-app/uni-collapse-item/uni-collapse-item.vue'
 	import uniBadge from '@/components/uni-app/uni-badge/uni-badge.vue'
+	import { pathToBase64, base64ToPath } from 'image-tools'
 	// let myCanvas = uni.createCanvasContext('myCanvas')
 	// let my_Canvas = uni.createCanvasContext('my_Canvas')
 	export default {
@@ -177,6 +178,7 @@
 			return { 
 				titlePointType: '请选择测点类型',
 				picSrc: '../../../static/images/projectPic.jpg',
+				ImageFile: '',  
 				phone_width: '342',
 				set_height: '242',
 				img_w: '1282',
@@ -194,7 +196,7 @@
 				divY: '',
 				smallWidth: '30',
 				smallHeight: '30',
-				smallTop: '',
+				smallTop: '', // 小紫框的上边距
 				smallLeft: '',
 				mar_top: '',
 				mar_left: '',
@@ -251,12 +253,9 @@
 			const that = this;
 			this.myCanvas = uni.createCanvasContext('myCanvas',this) // 创建一个myCanvas ,(id,组件实例this), 用来操作相应Id的canvas组件
 			this.my_Canvas = uni.createCanvasContext('my_Canvas',this)
-			// console.log(this.myCanvas)
-			// console.log(this.my_Canvas)
-			
-			this.getFirst()   // this.pointList = []
-			
-			
+			console.log(this.myCanvas)
+			console.log(this.my_Canvas)
+			this.getFirst() 
 			// var url_load = "../../../static/images/projectPic.jpg";
 			// myCanvas.drawImage(url_load, 0, 0, 1282, 906, 0, 0, 342, 243);
 		},
@@ -283,20 +282,20 @@
 		mounted() {
 			let that = this
 			that.getStorageInfo(); // 获取缓存
-			uni.getSystemInfo({
+			uni.getSystemInfo({ // 获取app系统信息
 			    success: (res) => {
-					// console.log(res.pixelRatio);
+					console.log(res);
 			            that.plus = res.pixelRatio // 获取像素比
 			    }	
 		   })
 		   // console.log(that.plus);  
-		   var plus = that.plus
-			var img = this.$refs["pic"];
+		   const plus = that.plus
+			// var img = this.$refs["pic"];
+			
 			this.set_height = this.phone_width * (this.img_h / this.img_w)
 			this.small_width = this.phone_width * 0.2 //smalldiv的宽度
 			this.small_height = this.set_height * 0.2 //samlldiv的高度
-
-			this.smallWidth = this.small_width
+			this.smallWidth = this.small_width 
             this.smallHeight = this.small_height   
 			
 			this.canvasWidth = this.phone_width * plus;
@@ -311,44 +310,46 @@
 			// this.getFirst()
 			// this.getSavedPoint()
 		},
+		watch: {
+			// pointData: function(val,oldVal) {
+			// 	console.log(val);
+			// 	console.log(oldVal);
+			// 	// pathToBase64(that.picSrc).then(res => {
+			// 	// 	// this.uploadImg(res)
+			// 	// 	console.log(res)
+			// 	// 	console.log(that.picSrc)
+			// 	// 	// that.picSrc = res
+			// 	// 	// that.savePicSrc();
+			// 	// });	
+				
+			// }
+		},
 		methods: {
-			// aaa(){
-			// 	uni.startSoterAuthentication({
-			//     success: (res) => {
-			// 		// console.log(res);
-			//     }	
-			// 	})
-			// },
 			getStorageInfo() {
+				const that = this;
 				uni.getStorage({
 					key:'cardParam',
 					success:(res) =>{
 						// console.log(res)
-						let temp = res.data
-						this.cardParam = temp
+						that.cardParam = res.data
 						uni.getStorage({
-							key: 'PicSrc',
-							success: (res) => {
+							key: 'userInfo',
+							success:(res) =>{
 								// console.log(res)
-								let temp = res.data
-								this.picSrc = res.data
-								uni.getStorage({
-									key: 'userInfo',
-									success:(res) =>{
-										// console.log(res)
-										let temp = res.data
-										this.currentData = res.data
-										this.projectId = this.currentData.projectId
-										this.getPointStatus();
-									}
-								})
+								that.currentData = res.data
+								that.projectId = that.currentData.projectId
+								that.getPointStatus();
 							}
 						})
 					}
 				})
-				
-				
-				
+				uni.getStorage({
+					key: 'PicSrc',
+					success: (res) => {
+						// console.log(res)
+						that.picSrc = res.data
+					}
+				})
 			},
 			getFirst() { 
 				// this.creat(1, 1, 2, 3, 4, 5, 6, 7); //将点布置到相应位置
@@ -356,25 +357,25 @@
 				// console.log(this.$refs.reTestModal.isShow)
 				this.$refs.reTestModal.isShow = false // 隐藏弹框的图标
 				this.$refs.reTestModal0.isShow = false // 隐藏弹框的图标
-				
 				// this.budian(1, 2, 3, 4, 5, 6, 7); //生成点
 				// this.budian(11, 22, 33, 44, 55, 66, 77); //生成点
 			},
 			//窗口坐标转换为canvas坐标
 			windowTocanvas(flag, x, y) {
-				// console.log(111)
-					let view = uni.createSelectorQuery().in(this).select("#myCanvas");
-					view.boundingClientRect(data => {
-						// console.log(data);
-						// console.log(x,y);
-						this.tomyCanvas = {
-							x: x - data.left,//当前小紫色方框与canvas左内边距
-							y: y - data.top,
-							mar_t: data.top,
-							mar_l: data.left,//canvas左边距
-						};
-					// console.log(this.tomyCanvas);
-					}).exec();
+				const that = this
+				let view = uni.createSelectorQuery().in(this).select("#myCanvas");
+				// console.log(view);
+				view.boundingClientRect(data => {
+					// console.log(data);
+					// console.log(x,y);
+					that.tomyCanvas = {
+						x: x - data.left,//当前小紫色方框与canvas左内边距
+						y: y - data.top,
+						mar_t: data.top,
+						mar_l: data.left,//canvas左边距
+					};
+				// console.log(this.tomyCanvas);
+				}).exec();
 			},
 			//窗口坐标转换为canvas坐标
 			// windowTocanvas1(flag, x, y) {
@@ -394,63 +395,62 @@
 			//移动
 			touchmove(e){
 				let that = this;
-				that.tempE = e;
+				// that.tempE = e;
 				// console.log(e)
-				// console.log(that.tempE)
 				//pageX 当前点击点X左边
 				if (that.smallDivShow == 'none') return ; // 处于布点状态无法移动小紫框放大
-				that.windowTocanvas(that.myCanvas, that.tempE.touches[0].pageX, that.tempE.touches[0].pageY); // 计算当前小方框相对于canvas的XY左边
+				that.windowTocanvas(that.myCanvas, e.touches[0].pageX, e.touches[0].pageY); // 计算当前小方框相对于canvas的XY左边
 				// console.log(that.windowTocanvas)
 				that.buttonShow = true //显示下方按钮
 				let loc = that.tomyCanvas  // 小紫框到canvas的边距
-				var x = parseInt(loc.x);
-				var y = parseInt(loc.y);
+				// console.log(loc);
+				// var x = parseInt(loc.x);
+				// var y = parseInt(loc.y);
+				var x = loc.x
+				var y = loc.y;
 				// console.log(loc); 
 				var LimitHeight = that.set_height
-				if (y < LimitHeight) {
-					that.mar_top = loc.mar_t;  // canvas的上边距
-					that.mar_left = loc.mar_l;  // mar_left = divX
+				if (y < LimitHeight) { 
+					// that.mar_top = loc.mar_t;  // canvas的上边距
+					// that.mar_left = loc.mar_l;  // mar_left = divX
 					if (x < 0 && y < that.set_height) { //当鼠标的X坐标小于图片与div遮罩层的x坐标和是ｄｉｖｘ＝０；
-						that.divX = loc.mar_l;
+						that.divX = loc.mar_l; 
 					} else if (x >= 0 && x < that.phone_width - that.smallWidth && y < that.set_height) { //鼠标的X坐标在图片内部并且小于图片最右边的X坐标
-						that.divX = x + that.mar_left;
+						that.divX = x + loc.mar_l;
 					} else if (x >= that.phone_width - that.smallWidth && y < that.set_height) { //鼠标的X坐标大于图片的最右边的X坐标 （Y轴同理）
 						// that.divX = that.divX
 					}
 				
 					if (y < 0) {
-						that.divY = that.mar_top;
+						that.divY = loc.mar_t;
 					} else if (y >= 0 && y < that.set_height - that.smallHeight) {
-						that.divY = that.mar_top + y;
+						that.divY = loc.mar_t + y;
 					} else if (y > that.set_height - that.smallHeight && y <= that.set_height) {
-						that.divY = that.mar_top + that.set_height - that.smallHeight;
-					} else if (y > that.set_height) {
-				
-					}
+						that.divY = loc.mar_t + that.set_height - that.smallHeight;
+					} else if (y > that.set_height) {}
 					that.smallTop = that.divY
 					that.smallLeft = that.divX
-					// 获取图纸大小信息
-					 uni.getImageInfo({
-						src: that.picSrc,
-						success: function (image) {
-							// console.log(image.width);
-							// console.log(image.height);
-							that.img_w = image.width;
-							that.img_h = image.height;
-						}
-					});
-					that.X = (that.divX - that.mar_left) * (that.img_w * 0.5 / that.phone_width); // 放大图的坐标
-					that.Y = (that.divY - that.mar_top) * (that.img_w * 0.5 / that.phone_width);
+					that.X = (that.divX - loc.mar_l) * (that.img_w * 0.5 / that.phone_width); // 放大图的坐标
+					that.Y = (that.divY - loc.mar_t) * (that.img_w * 0.5 / that.phone_width);
 					that.M = that.small_width * (that.img_w * 0.5 / that.phone_width);  // 放大图的截取大小
 					that.N = that.small_height * (that.img_w * 0.5 / that.phone_width);
-					// console.log(X+"@"+Y+"@"+M+"@"+N)
-					if (that.biao == "move") {
-						that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
-						that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 ,that. M*2 , that.N*2 , 0, 0, 342, 242); //绘制图片
-						that.my_Canvas.draw(); //绘制图片 
-					} 
-					that.box_X = that.divX - that.mar_left; // 小紫框相对于canvas的X坐标, 小紫框的坐标 - canvas的坐标
-					that.box_Y = that.divY - that.mar_top;
+					// console.log(that.X+"@"+that.Y+"@"+that.M+"@"+that.N)
+					// that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
+					that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 ,that. M*2 , that.N*2 , 0, 0, 342, 242); //绘制图片
+					that.my_Canvas.draw(); //绘制图片 
+					// setTimeout(()=>{
+					// 	that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 ,that. M*2 , that.N*2 , 0, 0, 342, 242); //绘制图片
+					// 	that.my_Canvas.draw(); //绘制图片 
+					// 	// console.log(11);
+					// },200)
+					// console.log(22);
+					// if (that.biao == "move") {
+					// 	that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
+					// 	that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 ,that. M*2 , that.N*2 , 0, 0, 342, 242); //绘制图片
+					// 	that.my_Canvas.draw(); //绘制图片 
+					// } 
+					that.box_X = that.divX - loc.mar_l; // 小紫框相对于canvas的X坐标, 小紫框的坐标 - canvas的坐标
+					that.box_Y = that.divY - loc.mar_t;
 				}
 			},
 			//绘制移到的框和放大图
@@ -616,12 +616,12 @@
 				that.pointList.forEach(item => {				
 					if (item.title == 'y' && item.id==that.select_point.id) {
 						item.display = 'block'
-						item.left = (e.touches[0].x - that.port_obj.left )
+						item.left = (e.touches[0].x - that.port_obj.left ) + 6.5
 						// item.left = (e.touches[0].x - that.port_obj.left - 10.00000000000000)
-						item.top = (e.touches[0].y + that.port_obj.height )
+						item.top = (e.touches[0].y + that.port_obj.height ) + 10.5
 						// console.log(item.top + "子" + item.left)						
-						por = [item.left / 342, item.top / 242, that.box_X, that.box_Y, that.num]; // 点相对于canvas的坐标
-						that.por_obj[point_name + "|" + that.num] = por; // 将点及对应的坐标存入对象						
+						por = [(item.left-2) / 342, (item.top-1) / 242, that.box_X, that.box_Y, that.num]; // 点相对于canvas的坐标
+						that.por_obj[point_name + "|" + that.num] = por; // 将点及对应的坐标存入对象	
 						// that.my_Canvas.arc(item.left+20, item.top-25, 10, 0, 2*Math.PI,false);
 						// that.my_Canvas.setFillStyle('yellow');	
 						// that.my_Canvas.fill();
@@ -655,7 +655,23 @@
 			
 			//展示测点类型函数
 			openPopover() {
-				this.animationShow = !this.animationShow
+				let isShow = false;
+				for (let i = 0; i < this.pointArr.length; i++) {
+					const children = this.pointArr[i].children;
+					if (children.length != 0) {
+						isShow = true;
+						break;
+					}
+				}
+				if (isShow == true) {
+					this.animationShow = !this.animationShow
+				} else {
+					this.animationShow  = false;
+					uni.showToast({
+						icon: 'none',
+						title: '暂无测点类型'
+					})
+				}
 				// console.log(this.pointArr)
 				// console.log(this.pointData)
 			},
@@ -682,9 +698,9 @@
 							position: 'bottom',
 							title: '当前为'+res.data.data[0].status+'状态！'
 						});
+						this.getMeasureType()
 						this.getSavedPoint()
 						// this.getPointType()
-						this.getMeasureType()
 					}else{
 						this.pointStatus = '初测'
 						uni.showToast({
@@ -693,8 +709,8 @@
 							title: '当前为初测状态！'
 						});
 						// this.getPointType()
-						this.getSavedPoint()
 						this.getMeasureType()
+						this.getSavedPoint()
 					}
 					
 					uni.hideLoading()//隐藏加载中转圈圈
@@ -754,10 +770,10 @@
 				let isLoading = false//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					if(res.data.code){
-						this.pointArr = res.data.data
+						that.pointArr = res.data.data
 						let i = that.currentRadio;
 						that.pointTypeArr = that.pointArr[i];
-						// console.log(this.pointArr)
+						console.log(that.pointArr)
 					}else{
 						uni.showToast({
 							icon: 'none',
@@ -790,7 +806,7 @@
 				} 
 				let isLoading = false//是否需要加载动画
 				that.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					that.pointList = []
 					if(res.data.code){
 						for(var i=0;i<res.data.data.length;i++){
@@ -821,6 +837,7 @@
 				that.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					// console.log(res.data)
 					if(res.data.code){
+						that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
 						that.getSavedPoint()
 						uni.showToast({
 							icon: 'none',
@@ -874,14 +891,14 @@
 				let isLoading = false//是否需要加载动画
 				// console.log(this.cardParam.id)
 				that.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					// console.log(that.cardParam.id)
 					that.putPointNum = res.data.putPointNum
 					that.notPointNum = res.data.notPointNum
 					if(res.data.code){
 						that.pointData = res.data.data
 						// console.log(res.data.notPointNum)
-						let i = that.currentRadio;
+						const i = that.currentRadio;
 						that.pointDataPart = that.pointData[i];
 						// console.log(that.pointDataPart)
 						that.drawPoint()
@@ -900,8 +917,8 @@
 				})
 			}, 
 			// 将已保存的点画到画布上
-			drawPoint(X_father,Y_father,X_zb,Y_zb,length,i,num) {
-				const that = this;
+			drawPoint() {
+				const that = this; 
 					// let myCanvas = document.querySelector('#myCanvas > canvas')
 					// let myCanvas = uni.createSelectorQuery().in(this).select("#myCanvas");
 					// let ctx = myCanvas.getContext('2d')
@@ -918,7 +935,7 @@
 					var phone_width=342;
 					var set_height=242;
 					let data = that.pointData
-					// console.log(data); 
+					console.log(data); 
 					
 					// const myCanvas = uni.createCanvasContext('myCanvas')
 					// console.log(data)
@@ -960,28 +977,76 @@
 							  y: 0,
 							  width: 342,
 							  height: 242,
-							  destWidth: 3420,
-							  destHeight: 2420,
+							  destWidth: 342*5,
+							  destHeight: 242*5,
 							  fileType:'jpg',
 							  canvasId: 'myCanvas',
 							  success: function(res) {
+								  // that.picSrc = res.tempFilePath
+								  // that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
+								  // that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 , that.M *2, that.N*2, 0, 0, 342, 242); //绘制图片
+								  // that.my_Canvas.draw();
+								  // uni.getImageInfo({
+								  // 	src: that.picSrc,
+								  // 	success: function (image) {
+								  // 		// console.log(that.picSrc)
+								  // 		console.log(1111)
+								  // 		console.log(image.width);
+								  // 		console.log(image.height);
+								  // 		that.img_w = image.width;
+								  // 		that.img_h = image.height;
+								  // 	}
+								  // });
+								  // pathToBase64(that.picSrc).then(res => {
+								  // 	// this.uploadImg(res)
+								  // 	 // console.log(res)
+									 // // console.log(that.picSrc)
+									 // that.picSrc = res
+									 // that.savePicSrc();
+								  // });	
+								  // that.picSrc = res.tempFilePath;
+								  // that.savePicSrc()
+								  // that.ImageFile = that.commonFunc.b64oblobTourl(res.tempFilePath);
+								  // console.log(that.ImageFile)
 								  uni.compressImage({
 									  src: res.tempFilePath,
-									  quality: 100,
+									  quality: 80,
 									  success: res => {
 										  // console.log(res.tempFilePath)
 										  that.picSrc = res.tempFilePath
-										  that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
-										  that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 , that.M *2, that.N*2, 0, 0, 342, 242); //绘制图片
-										  // console.log(that.picSrc,'---',that.X*2, '--',that.Y*2,'--',that.M *2, '--',that.N*2,)
-										  that.my_Canvas.draw()
-										  that.savePicSrc()
-										  
+										  uni.getImageInfo({
+										  	src: that.picSrc,
+										  	success: function (image) {
+										  		// console.log(that.picSrc)
+										  		// console.log(1111)
+										  		// console.log(image.width);
+										  		// console.log(image.height);
+										  		that.img_w = image.width;
+										  		that.img_h = image.height;
+										  	}
+										  });
+										  pathToBase64(that.picSrc).then(res => {
+										  	// this.uploadImg(res)
+										  	 // console.log(res)
+											 // console.log(that.picSrc)
+											 that.picSrc = res 
+											 that.savePicSrc();
+										  });									
 										}
 									})
 								} 
 							})
-						},500)
+						},300)
+						// setTimeout(()=>{
+						// 	console.log(that.picSrc)
+						// 	pathToBase64(that.picSrc).then(res => {
+						// 		// this.uploadImg(res)
+						// 		  // console.log(res)
+						// 		  that.picSrc = res;
+						// 		  that.savePicSrc()
+						// 	});
+						// },500)
+						
 					}));
 					// console.log(this.$refs.myCanvas)
 					// this.$refs.myCanvas.toBlob(function(blob) {
@@ -1006,20 +1071,28 @@
 				},
 				savePicSrc () {
 					const that = this;
-					const opts = {
+					// console.log(base64)
+					const opts = { 
 							url: that.api+'/module_project/ActualMeasure/MeasurePoint.php',
 							method: 'POST' ,
 						}
 					const param = {
-						flag: 'savePrimaryPicSrc',
+						flag: 'savePicSrc',
 						measureId:that.cardParam.id,
-						picSrc: that.picSrc,
+						status: that.pointStatus,
+						base64Pic: that.picSrc,
 					}
+					// console.log(param)
 					let isLoading = false;
 					that.myRequest.httpRequest(opts, param, isLoading).then(res => {
 						if (res.data.code) {
 							// console.log(that.cardParam.id)
-							console.log(res.data)
+							console.log(res.data.img)
+							that.picSrc = that.imageUrl + '/inspectPic/upload/' + res.data.img
+							console.log(that.picSrc);
+							that.my_Canvas.clearRect(0, 0, 1000, 1000); //清除画布
+							that.my_Canvas.drawImage(that.picSrc, that.X*2, that.Y*2 , that.M *2, that.N*2, 0, 0, 342, 242); //绘制图片
+							that.my_Canvas.draw();
 						}
 						uni.hideLoading()//隐藏加载中转圈圈
 						that.isloading = false//取消遮罩层
@@ -1421,10 +1494,10 @@
 		height: 40px;
 	}
     .commonbar{
-		width: 20px;
+		width: 50rpx;
 		height: 20px;
 		border-radius: 50%;
-		font-size: 15px;
+		font-size: 10px;
 		color: #000;
 		line-height: 20px;
 		text-align: center;
@@ -1433,7 +1506,7 @@
 	.bar {
 		float: left;
 		display: block;
-		width: 30px;
+		width: 50rpx;
 	}
 
 	.Bar {

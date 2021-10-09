@@ -60,7 +60,8 @@
 					</uni-view>
 					<uni-view class="uni-section__content">
 						<uni-text class="uni-section__content-title distraction">
-							<span>第一层级</span></uni-text>
+							<span>第一层级</span>
+						</uni-text>
 					</uni-view>
 				</uni-view>
 				<uni-list>
@@ -185,22 +186,22 @@
 					buttonColor: '#007AFF'
 				},
 				content: [{
-						iconPath: '/static/images/baocuned.png',
+						iconPath: '/static/images/save.png',
 						selectedIconPath: '/static/images/baocuned.png',
 						text: '保存',
 						active: false
 				},{
-						iconPath: '/static/images/shangchuaned.png',
+						iconPath: '/static/images/uploadPic.png',
 						selectedIconPath: '/static/images/shangchuaned.png',
 						text: '上传图片',
 						active: false
 				},{
-						iconPath: '/static/images/fasonged.png',
+						iconPath: '/static/images/push.png',
 						selectedIconPath: '/static/images/fasonged.png',
 						text: '推送消息',
 						active: false
 				},{
-						iconPath: '/static/images/qianminged.png',
+						iconPath: '/static/images/sign.png',
 						selectedIconPath: '/static/images/qianminged.png',
 						text: '签名',
 						active: false 
@@ -246,7 +247,7 @@
 				console.log(this.buildSelData)
 				console.log(this.procedureInfo)
 				//获取本地缓存
-				this.getStoragedata()
+				this.getStoragedata() 
 				this.getAllPersonList()
 				this.getLevelPersonFunc()
 				this.getInspectContent()
@@ -280,7 +281,7 @@
 					}
 					let isLoading = true//是否需要加载动画
 					this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-						// console.log(res.data)
+						console.log(res.data)
 						uni.hideLoading()//隐藏加载中转圈圈
 						this.isloading = false//取消遮罩层
 						if(res.data.code){
@@ -297,7 +298,7 @@
 						url:`AcceptPicDetail?currentData=${this.currentData}`+`&cardParam=${cardParam}`+`&inspectCardParam=${inspectCardParam}`+`&procedureInfo=${procedureInfo}`+`&acceptTimeStamp=${this.acceptTimeStamp}`
 					})
 				}else if(indexOf==2){ //推送消息
-					// console.log(this.procedureInfo.content)
+					console.log(this.procedureInfo.content)
 					let that = this
 					uni.showModal({
 					    title: '提交质量员确认',
@@ -352,6 +353,7 @@
 					}
 				});
 			},
+			// 获取人员
 			getAllPersonList() {
 				this.acceptPositon = this.buildSelData.build+this.buildSelData.floor+this.buildSelData.unit
 				this.acceptObject = this.currentData.username
@@ -366,7 +368,7 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					uni.hideLoading()//隐藏加载中转圈圈
 					this.isloading = false//取消遮罩层
 					if(res.data.code){
@@ -387,6 +389,7 @@
 			},
 			//获取层级人员
 			getLevelPersonFunc() {
+				const that = this;
 				let opts = {
 					url: this.api+'/module_project/InspectAccept/GetPeople.php',
 					method: 'POST'
@@ -397,11 +400,11 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					uni.hideLoading()//隐藏加载中转圈圈
 					this.isloading = false//取消遮罩层
 					if(res.data.code){
-						this.createSelect(res.data.data)
+						that.createSelect(res.data.data)
 					}
 				}, error => {
 					console.log(error);
@@ -409,7 +412,8 @@
 			},
 			//选择验收人
 			selectAcceptPerson(val){
-				// console.log(val)
+				console.log(val)
+				console.log(this.acceptPerson)
 				this.acceptPerson = val 
 				this.firstLevel = []
 				this.secondLevel = []
@@ -481,10 +485,11 @@
 						}else if(post=="栋号长"||post=="高级施工员"||post=="施工员"){
 							// this.acceptPerson.push(personArr[3]+'||'+personArr[2]+'：'+personArr[0])
 							this.secondLevel.push({
-								userId: personArr[3],
-								title: personArr[2]+'：'+personArr[0],
+								userId: personArr[0],
+								title: personArr[1],
 								isSign: '未签名'
 							})  
+							console.log(this.secondLevel);
 							n++;
 							this.placeholder = "现已选择"+n+"个验收人"
 						}else if(post=="项目总工"){
@@ -493,7 +498,7 @@
 								userId: personArr[0],
 								title: personArr[1],
 								isSign: '未签名'
-							})  
+							}) 
 							n++;
 							this.placeholder = "现已选择"+n+"个验收人"
 						}else if(post=="项目经理"){
@@ -536,7 +541,7 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					uni.hideLoading()//隐藏加载中转圈圈
 					this.isloading = false//取消遮罩层
 					this.firstLevel = []
@@ -686,7 +691,7 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					uni.hideLoading()//隐藏加载中转圈圈
 					this.isloading = false//取消遮罩层
 					if(res.data.code){
@@ -698,7 +703,9 @@
 			},
 			//第二次创建
 			createTwo(item,temporaryVal,personName,acceptProcess,opinion,acceptTimeStamp) {
-				var n=0;
+				var n=0; 
+				console.log(item);
+				console.log(temporaryVal);
 				for(var key in temporaryVal){
 					var obj = temporaryVal[key]
 					var personArr = obj.split('|')
@@ -789,6 +796,8 @@
 							}
 						}else if((personArr[2]=="栋号长"||personArr[2]=="高级施工员"||personArr[2]=="施工员")&&personArr[3]!=""){
 							for(var key1 in item){
+								console.log(item[key1]);
+								console.log(personArr[1]);
 								if(personArr[1]==item[key1]){
 									this.acceptPerson.push(personArr[3]+'||'+personArr[2]+'：'+personArr[0])
 									this.secondLevel.push({
@@ -796,6 +805,7 @@
 										title: personArr[2]+'：'+personArr[0],
 										isSign: '未签名'
 									})  
+									console.log(this.secondLevel);
 									n++;
 									this.placeholder = "现已选择"+n+"个验收人"
 								}
@@ -840,6 +850,7 @@
 					url: this.api+'/module_project/InspectAccept/AcceptCheck.php',
 					method: 'POST'
 				} 
+				console.log(this.procedureInfo);
 				let param = {
 					flag: 'getInspectContent',
 					inspectTimeStamp: this.procedureInfo.inspectStr.split('|')[1]
@@ -847,7 +858,8 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)  
+					console.log(111);
+					console.log(res.data)  
 					uni.hideLoading()//隐藏加载中转圈圈 
 					this.isloading = false//取消遮罩层
 					if(res.data.code){

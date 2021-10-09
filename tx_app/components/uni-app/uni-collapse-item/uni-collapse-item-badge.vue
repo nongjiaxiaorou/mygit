@@ -5,6 +5,7 @@
 			<text class="uni-collapse-cell__title-text">{{ title }}</text>
 			<uni-badge :text="pointTatalNum" type="primary" size="small" ></uni-badge>
 			<uni-badge :text="unQualifiedBadge" type="error" size="small" ></uni-badge>
+			<uni-badge :text="qualifiedPercentage" type="warning" size="small" v-show="qualifiedPercentage!='NaN%'" ></uni-badge>
 			<!-- #ifdef MP-ALIPAY -->
 			<view :class="{ 'uni-collapse-cell__title-arrow-active': isOpen, 'uni-collapse-cell--animation': showAnimation === true }" class="uni-collapse-cell__title-arrow">
 				<uni-icons color="#bbb" size="20" type="arrowdown" />
@@ -75,6 +76,11 @@
 		computed: {
 			pointTatalNum () {
 				return parseInt(this.unQualifiedBadge) + parseInt(this.qualifiedBadge) +''
+			},
+			qualifiedPercentage () {
+				let percentNum =  parseInt(this.unQualifiedBadge) / parseInt(this.pointTatalNum) *100;
+				percentNum = percentNum.toFixed(2);
+				return percentNum + '%'
 			}
 		},
 		data() {
@@ -141,6 +147,7 @@
 	}
 
 	.uni-collapse-cell--disabled {
+		color: #AAAAAA;
 		background-color: #f1f1f1;
 	}
 

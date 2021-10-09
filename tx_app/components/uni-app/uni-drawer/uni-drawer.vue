@@ -68,7 +68,7 @@
 			this.rightMode = this.mode === 'right'
 		},
 		methods: {
-			clear(){},
+			clear () {},
 			close(type) {
 				// fixed by mehaotian 抽屉尚未完全关闭或遮罩禁止点击时不触发以下逻辑
 				if((type === 'mask' && !this.maskClick) || !this.visibleSync) return

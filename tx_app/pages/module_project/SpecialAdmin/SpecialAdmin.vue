@@ -1,14 +1,14 @@
 <template>
 	<view>
 		<uni-list>
-		    <uni-list-item to="Pour">
+		    <uni-list-item to="pour">
 		        <view slot="header" class="slot-box"><image class="slot-image" src="../../../static/images/wbjc.png" mode="widthFix"></image></view>
 		        <text slot="body" class="slot-box slot-text">砼浇筑管理</text>
 		    </uni-list-item>
 		</uni-list>
 		
 		<uni-list>
-		    <uni-list-item to="Removal">
+		    <uni-list-item to="removal">
 		        <view slot="header" class="slot-box"><image class="slot-image" src="../../../static/images/wbjc.png" mode="widthFix"></image></view>
 		        <text slot="body" class="slot-box slot-text">砼拆模管理</text>
 		    </uni-list-item>

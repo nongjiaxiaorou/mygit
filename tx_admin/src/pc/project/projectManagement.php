@@ -17,31 +17,32 @@
 			if($result->num_rows>0)	{
 				$res = array();
 				$resData = array();
-			    $i=0;
-			    while($row = $result->fetch_assoc()){
+				$i=0;
+				while($row = $result->fetch_assoc()){
 					$resData['id'] = $row['id'];
-			        $resData['label'] = $row['section'];
-			        $resData['value'] = $row['section'];
-			        $categoryMerge = $row['categoryMerge'];
-			        $childData = array();
-			        if(strpos($categoryMerge, '&')!== false){
-			        	$category = explode("&",$categoryMerge);
-				        $category_arr = array_unique($category); //数组去重
-				        for($j=0;$j<count($category_arr);$j++){
-				        	$item = array();
-				        	$item['value'] = $category_arr[$j];
-				        	$item['label'] = $category_arr[$j];
-				        	$childData[$j] = $item;
-			        	}
-			        }else{
-			        	$item = array();
-			        	$item['value'] = $categoryMerge;
-			        	$item['label'] = $categoryMerge;
-			        	$childData[0] = $item;
-			        }
-			        $resData['children'] = $childData;
+					$resData['label'] = $row['section'];
+					$resData['value'] = $row['section'];
+					$resData['category'] = $row['category'];
+					$categoryMerge = $row['categoryMerge'];
+					$childData = array();
+					if(strpos($categoryMerge, '&')!== false){
+						$category = explode("&",$categoryMerge);
+						$category_arr = array_unique($category); //数组去重
+						for($j=0;$j<count($category_arr);$j++){
+							$item = array();
+							$item['value'] = $category_arr[$j];
+							$item['label'] = $category_arr[$j];
+							$childData[$j] = $item;
+						}
+					}else{
+						$item = array();
+						$item['value'] = $categoryMerge;
+						$item['label'] = $categoryMerge;
+						$childData[0] = $item;
+					}
+					$resData['children'] = $childData;
 					$res[$i] = $resData;
-			        $i++;
+					$i++;
 				}
 				$data['data'] = $res;
 			}else{
@@ -57,16 +58,16 @@
 			if($result->num_rows>0)	{
 				$res = array();
 				$resData = array();
-			    $i=0;
-			    while($row = $result->fetch_assoc()){
+				$i=0;
+				while($row = $result->fetch_assoc()){
 					$resData['id'] = $row['id'];
-			        $resData['section'] = $row['section'];
-			        $resData['build'] = $row['build'];
-			        $resData['unitName'] = $row['unitName'];
-			        $resData['undergroundNumber'] = $row['undergroundNumber'];
-			        $resData['abovegroundNumber'] = $row['abovegroundNumber'];
+					$resData['section'] = $row['section'];
+					$resData['build'] = $row['build'];
+					$resData['unitName'] = $row['unitName'];
+					$resData['undergroundNumber'] = $row['undergroundNumber'];
+					$resData['abovegroundNumber'] = $row['abovegroundNumber'];
 					$res[$i] = $resData;
-			        $i++;
+					$i++;
 				}
 				$data['data'] = $res;
 			}else{
@@ -110,13 +111,13 @@
 			if($result->num_rows>0)	{
 				$res = array();
 				$resData = array();
-			    $i=0;
-			    while($row = $result->fetch_assoc()){
+				$i=0;
+				while($row = $result->fetch_assoc()){
 					$resData['id'] = $row['id'];
-			        $resData['picName'] = $row['picName'];
-			        $resData['floor'] = $row['floor'];
+					$resData['picName'] = $row['picName'];
+					$resData['floor'] = $row['floor'];
 					$res[$i] = $resData;
-			        $i++;
+					$i++;
 				}
 				$data['data'] = $res;
 			}else{
@@ -164,12 +165,12 @@
 			if($result->num_rows>0)	{
 				$res = array();
 				$resData = array();
-			    $i=0;
-			    while($row = $result->fetch_assoc()){
+				$i=0;
+				while($row = $result->fetch_assoc()){
 					$resData['id'] = $row['id'];
-			        $resData['unitName'] = $row['unitName'];
+					$resData['unitName'] = $row['unitName'];
 					$res[$i] = $resData;
-			        $i++;
+					$i++;
 				}
 				$data['data'] = $res;
 			}else{
@@ -181,40 +182,40 @@
 			$proTimeStamp = isset($_POST["proTimeStamp"]) ? $_POST["proTimeStamp"] : '';//工程对应的时间戳	
 			$sql = "SELECT * FROM tb_project_administrator WHERE `protimeStamp` = '$proTimeStamp'";
 			$result = $conn -> query($sql);
-			if ($result -> num_rows > 0) {
+			if ($result->num_rows > 0) {
 				$res = array();
 				$resData = array();
 				$i=0;
 				while ($row = $result -> fetch_assoc()) {
 					$sql1 = "SELECT * FROM tb_project_build_person WHERE `userId` = '".$row['userId']."'";
 					$result1 = $conn -> query($sql1);
-					if ($result1 -> num_rows > 0) {
+					if ($result1->num_rows>0) {
 						$row1 = $result1 -> fetch_assoc();
 						$resData['id'] = $row['id'];
-				        $resData['userId'] = $row['userId'];
-				        $resData['username'] = $row['username'];
-				        $resData['phone'] = $row['phone'];
-				        $resData['label'] = $row['username'].'/'.$row['phone'];
-				        $resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
-				        $resData['selValue'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
-				        $post = $row['post'];
+						$resData['userId'] = $row['userId'];
+						$resData['username'] = $row['username'];
+						$resData['phone'] = $row['phone'];
+						$resData['label'] = $row['username'].'/'.$row['phone'];
+						$resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
+						$resData['selValue'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
+						$post = $row['post'];
 					}else{
 						$row1 = $result1 -> fetch_assoc();
 						$resData['id'] = $row['id'];
-				        $resData['userId'] = $row['userId'];
-				        $resData['username'] = $row['username'];
-				        $resData['phone'] = $row['phone'];
-				        $resData['label'] = $row['username'].'/'.$row['phone'];
-				        $resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
-				        $resData['selValue'] = '';
-				        $post = $row['post'];
+						$resData['userId'] = $row['userId'];
+						$resData['username'] = $row['username'];
+						$resData['phone'] = $row['phone'];
+						$resData['label'] = $row['username'].'/'.$row['phone'];
+						$resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row1['id'];
+						$resData['selValue'] = '';
+						$post = $row['post'];
 					}
 					$res[$post][$i] = $resData;
-			        $i++;
+					$i++;
 				}
 				$data['data'] = $res;
 			}else{
-				$data['code'] = 0;
+				$data['code'] = $result1->num_rows;
 			}
 		break;
 		//删除楼栋管理人员
@@ -232,37 +233,42 @@
 		break;
 		case 'getBuildPerson':
 			$buildId = isset($_POST["buildId"]) ? $_POST["buildId"] : '';
-			$sql = "SELECT * FROM tb_project_build_person WHERE `buildId`='$buildId'";
+			$timeStamp = isset($_POST["timeStamp"]) ? $_POST["timeStamp"] : '';
+			$sql = "SELECT * FROM `tb_project_build_person` WHERE `buildId`='$buildId' AND `timeStamp` = '$timeStamp'";
 			$result = $conn->query($sql);
+			$data['sql'] = $sql;
+			$data['result'] = $result->num_rows;
 			if($result->num_rows>0)	{
 				$res = array();
 				$resData = array();
-			    $i=0;
-			    $j=0;
-			    $k=0;
-			    while($row = $result->fetch_assoc()){
+				$i=0;
+				$j=0;
+				$k=0;
+				while($row = $result->fetch_assoc()){
 					$resData['id'] = $row['id'];
-			        $resData['userId'] = $row['userId'];
-			        $resData['username'] = $row['username'];
-			        $resData['phone'] = $row['phone'];
-			        $resData['label'] = $row['username'].'/'.$row['phone'];
-			        $resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row['id'];
-			        $resData['selValue'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row['id'];
-			        $post = $row['post'];
-			        if($post=="栋号长"){
-			        	$res[$post][$i] = $resData;
-			        	$i++;
-			        }else if($post=="质量员"){
-			        	$res[$post][$j] = $resData;
-			        	$j++;
-			        }else if($post=="施工员"){
-			        	$res[$post][$k] = $resData;
-			        	$k++;
-			        }
+					$resData['userId'] = $row['userId'];
+					$resData['username'] = $row['username'];
+					$resData['phone'] = $row['phone'];
+					$resData['label'] = $row['username'].'/'.$row['phone'];
+					$resData['value'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row['id'];
+					$resData['selValue'] = $row['username'].'/'.$row['phone'].'/'.$row['userId'].'/'.$row['id'];
+					$post = $row['post'];
+					if($post=="栋号长"){
+						$res[$post][$i] = $resData;
+						$i++;
+					}else if($post=="质量员"){
+						$res[$post][$j] = $resData;
+						$j++;
+					}else if($post=="施工员"){
+						$res[$post][$k] = $resData;
+						$k++;
+					}
 				}
+				$data['code'] = $result->num_rows;
 				$data['data'] = $res;
 			}else{
-				$data['code'] = 0;
+				$data['code'] = $result->num_rows;
+				
 			}
 		break;
 		//添加栋号管理人员

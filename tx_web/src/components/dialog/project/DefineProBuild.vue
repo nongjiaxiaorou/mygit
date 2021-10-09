@@ -13,6 +13,7 @@
 						</el-col>
 					</el-row>
 				</div>
+				
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormClose('dialogDefineBuild')">取 消</el-button>
@@ -53,7 +54,7 @@
 			}
 		},
 		mounted() {
-			this.getUnitName()
+			// this.getUnitName()
 		},
 		methods: {
 			//定义单元名称
@@ -84,9 +85,10 @@
 				that.$axios.post(that.$adminUrl + `/project/SetProBuild.php`, fd).then(res => {
 					// console.log(res)
 					let unitNameArr = res.data.name
-					let unitNameArrLen = res.data.name.length-1
-					let buildNameArr = that.buildForm.buildNameList
+					// let unitNameArrLen = res.data.name.length-1
+					// let buildNameArr = that.buildForm.buildNameList
 					// console.log(buildNameArr)
+					console.log(that.buildForm.buildNameList.length)
 					let buildNameArrLen = that.buildForm.buildNameList.length
 					for(let i=0;i<buildNameArrLen;i++){
 						that.buildForm.buildNameList[i].name = unitNameArr[i]

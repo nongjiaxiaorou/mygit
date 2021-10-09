@@ -1,12 +1,4 @@
 <template>
-</template>
-
-<script>
-</script>
-
-<style>
-</style>
-<template>
     <div class="AddPro">
         <el-dialog title="新建账号" :modal-append-to-body="false" customClass="customClass" :visible.sync="dialogEdit.show">
             <el-form :model="form" ref="dialogEdit" label-width="100px" :rules="formrules">

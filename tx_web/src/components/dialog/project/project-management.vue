@@ -3,19 +3,19 @@
 	<div :style="{height:this.commonFunc.screeHeight*1.4 +'px'}">
 		<el-row>
 			<el-col :span="8" style="height: 150px;border: 1px solid #000000;">
-				<div class="grid-content title-text title-box"> 区号及类别筛/{{registerBaseData.projectName}} <i class="el-icon-info"
+				<div class="grid-content title-text title-box">第一步 区号及类别筛/{{registerBaseData.projectName}} <i class="el-icon-info"
 					 title="若选项框没有数据,需要到项目登记的基本信息中进行区段定义!"></i></div>
 				<div class="grid-content-box">
 					<div class="block">
 						<!-- <span class="demonstration">hover 触发子菜单</span> -->
-						<el-cascader v-model="value" :options="options" :props="{ expandTrigger: 'hover' }" @change="getBuildInfo"></el-cascader>
+						<el-cascader v-model="value" :options="options" :props="{ expandTrigger: 'hover' }" @change="getBuildInfo" :key="keyValue"></el-cascader>
 					</div>
 				</div>
 			</el-col>
 			<el-col :span="16" style="height: 150px;border: 1px solid #000000;">
-				<div class="grid-content title-text title-box">增加栋号（注：请先完成 区号及类别筛选）</div>
+				<div class="grid-content title-text title-box">增加栋号（注：请先完成1 区号及类别筛选）</div>
 				<div class="grid-content-box">
-					<el-cascader class="customCascader" v-model="newAddValue" :options="options" :props="{ expandTrigger: 'hover' }" @change="newAddInfo"></el-cascader>
+					<el-cascader class="customCascader" v-model="newAddValue" :options="options" :props="{ expandTrigger: 'hover' }" @change="newAddInfo" ></el-cascader>
 					<el-button type="primary" class="circle-mg" icon="el-icon-edit" circle @click="openAddBuildDialog"></el-button>
 				</div>
 			</el-col>
@@ -23,7 +23,7 @@
 		<el-row>
 			<el-col :span="8" style="height: 400px;border: 1px solid #000000;">
 				<el-row>
-					<div class="grid-content title-text title-box"> 楼号信息</div>
+					<div class="grid-content title-text title-box">第二步 楼号信息</div>
 				</el-row>
 				<div class="content-table-box">
 					<el-table :height="this.commonFunc.screeHeight/1.5" :data="tableData1" style="width: 100%" max-height="300" empty-text="请选择区号"
@@ -45,7 +45,7 @@
 					<el-col :span="24">
 						<div class="flex grid-content title-text title-box flex-box">
 							<div>
-								 实测单元信息{{buildSel}}
+								第三步 实测单元信息{{buildSel}}
 								<i class="el-icon-info" title="若当前行楼层的字体为绿色,则已上传图片,请将鼠标移至相应楼层查看图片"></i>
 							</div>
 							<div>
@@ -57,11 +57,35 @@
 				</el-row>
 				<!-- <span>{{tableData2}}</span> -->
 				<div class="grid-content bg-purple-light">
-					<el-table :height="this.commonFunc.screeHeight/1.5" ref="multipleTable" @selection-change="handlefloorSelectionChange"
+					<!-- <div class="text">
+						<div>栋号长：<li v-for="item in buildingAdministrator" :key="item.buildingAdministrator">{{ item }}</li></div>
+						<div>质量员：<li v-for="item in qualityEngineer" :key="item.qualityEngineer">{{ item }}</li></div>
+						<div>施工员：<li v-for="item in builder" :key="item.builder">{{ item }}</li></div>
+					</div> -->
+					<el-table :height="this.commonFunc.screeHeight/1.9" :data="ResponsiblPersonData"  stripe style="width: 100%;">
+						<el-table-column
+							prop="username"
+							label="姓名"
+							align="center"
+							width="180">
+						</el-table-column>
+						<el-table-column
+							prop="phone"
+							label="电话"
+							align="center"
+							width="180">
+						</el-table-column>
+						<el-table-column
+							prop="position"
+							label="职位"
+							align="center">
+						</el-table-column>
+					</el-table>
+					<el-table :height="this.commonFunc.screeHeight/1.8" ref="multipleTable" @selection-change="handlefloorSelectionChange"
 					 :data="tableData2" stripe style="width: 100%;">
 						<el-table-column type="selection" width="55">
 						</el-table-column>
-						<el-table-column prop="floor" align="center" label="楼层" width="100">
+						<el-table-column prop="floor" align="center" label="楼层" width="100%;">
 							<template slot-scope="scope">
 								<el-popover placement="left-start" width="300" trigger="hover">
 									<img height="300" width="300" :src="scope.row.picName" />
@@ -73,13 +97,14 @@
 						<el-table-column prop="unit" align="center" label="查看单元">
 							<template slot-scope="scope">
 								<el-popover title="查看单元" placement="right-start" width="60" trigger="hover" ref="myPopover">
-									<span slot="reference">{{ scope.row.unit }}</span>
+									<span slot="reference" >{{ scope.row.unit }}</span>
 									<div class="box-boder">
-										<div v-for="item in scope.row.children"><span>{{item.unitContent}}</span></div>
+										<div v-for="item in scope.row.children"><span @click="handleJump(scope,item.unitContent)">{{item.unitContent}}</span></div>
 									</div>
 								</el-popover>
 							</template>
 						</el-table-column>
+
 						<el-table-column fixed="right" align="center" label="操作">
 							<template slot-scope="scope">
 								<el-button @click.native.prevent="changeUnit(scope.$index, scope.row)" type="text" size="small">
@@ -91,13 +116,15 @@
 							</template>
 						</el-table-column>
 					</el-table>
+					
+					
 				</div>
 			</el-col>
 		</el-row>
 		<importFloorPic @handleImportFloorChild="handleImportFloor" :registerBaseData = "registerBaseData" :floorData = "floorData" :dialogImportPic = "dialogImportPic"></importFloorPic>
 		<addNewBuild @handleNewBuildChild="handleNewBuild" :registerBaseData = "registerBaseData" :sectionData = "sectionData" :dialogNewBuild = "dialogNewBuild"></addNewBuild>
 		<updateUnit @handleNewUnitChild="handleNewUnit" :unitInfo = "unitInfo" :dialogNewUnit = "dialogNewUnit"></updateUnit>
-		<addPesponsiblePerson handleNewBuildPersonChild="handleNewBuildPerson" :currentRow = "currentRow" :buildPerson = "buildPerson" :dialogNewResPerson = "dialogNewResPerson"></addPesponsiblePerson>
+		<addPesponsiblePerson  handleNewBuildPersonChild="handleNewBuildPerson" :currentRow = "currentRow" :buildPerson = "buildPerson" :dialogNewResPerson = "dialogNewResPerson" @showCityName="getBuildPersonFunc"></addPesponsiblePerson>
 	</div>
 </template>
 
@@ -119,6 +146,12 @@
 		},
 		data() {
 			return {
+				buildingAdministrator: [],
+				qualityEngineer: [],
+				builder: [],
+				msgFormSon: [],
+				cascaderKey: 0,
+				keyValue: 0,
 				tableData2: [],
 				floorSel: [],
 				value: [],
@@ -143,30 +176,71 @@
 				dialogNewResPerson: {
 					show: false
 				},
-				buildPerson: {}
+				buildPerson: {},
+				ResponsiblPersonData: [],
+				sessionData: [],
 			}
 		},
+
+		watch: {
+
+			"registerBaseData.timeStamp": {
+				handler(newValue, oldValue) {
+					this.getSectionInfo()
+				}
+			},
+			registerBaseData:
+				function(newVal) {
+					this.value = []					
+					this.keyValue++ //只要监听到数据源发生变化 ，改变keyValue的值，达到重新渲染的效果
+					this.getSectionInfo()
+				},
+		},
+
 		mounted() {
+				let sessionData = sessionStorage.getItem('registerBaseData')
+				this.sessionData = JSON.parse(sessionData)
+				
 
 		},
 		methods: {
+
 			handlefloorSelectionChange(val) {
 				this.floorSel = val;
-				console.log(this.floorSel)
+				// console.log(this.floorSel)
 			},
+
+			// getMsgFormSon(data){
+            //     this.msgFormSon = data
+			// 	console.log(this.msgFormSon)
+			// 	for(var i = 0;i<this.msgFormSon.length;i++){
+			// 		if (this.msgFormSon[i][0].post == '栋号长') {
+			// 			this.buildingAdministrator.push(this.msgFormSon[i][0].nodeValue[0].label)
+			// 		}
+			// 		else if(this.msgFormSon[i][0].post == '质量员') {
+			// 			this.qualityEngineer.push(this.msgFormSon[i][0].nodeValue[0].label)
+			// 		}
+			// 		else{
+			// 			this.builder.push(this.msgFormSon[i][0].nodeValue[0].label)
+			// 		}
+			// 	}
+            // },
+
 			//获取栋号信息
 			getBuildInfo(value) {
 				this.loading = true
 				// console.log(value);
 				this.tableData1 = []
+				this.tableData2 = []
+				this.ResponsiblPersonData = []
 				let fd = new FormData()
 				fd.append('flag', 'getBuildInfo')
 				let sessionData = sessionStorage.getItem('registerBaseData')
-				let registerBaseData = JSON.parse(sessionData)
-				fd.append('timeStamp', registerBaseData.timeStamp)
+				this.sessionData = JSON.parse(sessionData)
+				fd.append('timeStamp', this.sessionData.timeStamp)
 				fd.append('sectionSel', this.value)
 				this.$axios.post(this.$adminUrl + `/project/projectManagement.php`, fd).then(res => {
-					// console.log(res.data)
+					console.log(res.data.data)
 					this.tableData1 = res.data.data
 					this.loading = false
 				}).catch(function(err) {
@@ -178,6 +252,9 @@
 			},
 			// 获取区号信息
 			getSectionInfo() {
+				this.tableData1 = []
+				this.tableData2 = []
+				this.ResponsiblPersonData = []
 				let fd = new FormData()
 				fd.append('flag', 'getSectionInfo')
 				let sessionData = sessionStorage.getItem('registerBaseData')
@@ -185,7 +262,7 @@
 				fd.append('timeStamp', registerBaseData.timeStamp)
 				// console.log(registerBaseData.timeStamp)
 				this.$axios.post(this.$adminUrl + `/project/projectManagement.php`, fd).then(res => {
-					// console.log(res.data)
+					console.log(res.data.data)
 					this.options = res.data.data
 				}).catch(function(err) {
 					console.log(err)
@@ -247,14 +324,14 @@
 				var strArr = temp.toString().split("").reverse();
 				var newNum = "";
 				for (var i = 0; i < strArr.length; i++) {
-				  newNum = (i == 0 && strArr[i] == 0 ? "" : (i > 0 && strArr[i] == 0 && strArr[i - 1] == 0 ? "" : changeNum[strArr[i]] + (strArr[i] == 0 ? unit[0] : unit[i]))) + newNum;
+					newNum = (i == 0 && strArr[i] == 0 ? "" : (i > 0 && strArr[i] == 0 && strArr[i - 1] == 0 ? "" : changeNum[strArr[i]] + (strArr[i] == 0 ? unit[0] : unit[i]))) + newNum;
 				}
 				 return newNum;
-			   }
-			   var overWan = Math.floor(num / 10000);
-			   var noWan = num % 10000; 
-			   if (noWan.toString().length < 4) noWan = "0" + noWan;
-			   return overWan ? getWan(overWan) + "万" + getWan(noWan) : getWan(num);
+				}
+				var overWan = Math.floor(num / 10000);
+				var noWan = num % 10000; 
+				if (noWan.toString().length < 4) noWan = "0" + noWan;
+				return overWan ? getWan(overWan) + "万" + getWan(noWan) : getWan(num);
 			},
 			//获取楼层图纸
 			getFloorPicFunc() {
@@ -279,9 +356,10 @@
 				// console.log(data)
 				this.tableData2 = []
 				let rows = this.currentRow
+				console.log(rows.undergroundNumber)
 				//遍历地下楼层
 				var undergroundNum = parseInt(rows.undergroundNumber);
-				if (undergroundNum) {
+				if(1) {
 					let unit_arr = rows.unitName.split('||')
 					var index = undergroundNum;
 					for (var i = 0; i < undergroundNum + 1; i++) {
@@ -320,11 +398,11 @@
 						}
 						this.tableData2.push(obj);
 					}
-				}
+				};
 				
 				//遍历地上楼层
 				var abovegroundNum = parseInt(rows.abovegroundNumber);
-				if (abovegroundNum) {
+				if (1) {
 					let unit_arr = rows.unitName.split('||')
 					var index = abovegroundNum;
 					for (var i = 0; i < abovegroundNum + 1; i++) {
@@ -363,6 +441,7 @@
 						this.tableData2.push(obj);
 					}
 				}
+				
 			},
 			//查看楼层信息
 			checkDetail(index, rows) {
@@ -371,9 +450,10 @@
 				// console.log(this.value[0])
 				this.getFloorPicFunc()
 				this.getBuildPersonFunc()
+				
 			},
 			openDialog() {
-				console.log(this.floorSel)
+				// console.log(this.floorSel)
 				this.floorData = this.floorSel
 				this.dialogImportPic.show = true
 			},
@@ -420,18 +500,22 @@
 			},
 			//获取栋号责任人
 			getBuildPersonFunc() {
-				// console.log(this.currentRow)
+				const that = this
+				console.log(that.currentRow)
 				let fd = new FormData()
 				fd.append('flag', 'getBuildPerson')
-				fd.append('buildId', this.currentRow.id)
+				fd.append('buildId', that.currentRow.id)
+				fd.append('timeStamp', this.sessionData.timeStamp)
 				this.$axios.post(this.$adminUrl + `/project/projectManagement.php`, fd).then(res => {
-					// console.log(res.data)
+					console.log(res.data.data)
 					if(res.data.data.length!=0){
-						this.buildPerson = res.data.data
+						that.buildPerson = res.data.data
+						that.ResponsiblPerson()
 					}
 				}).catch(function(err) {
 					console.log(err)
 				})
+				
 			},
 			openPersonDialog() {
 				// console.log(this.currentRow)
@@ -447,17 +531,39 @@
 					});
 				}else{
 					console.log(this.buildPerson)
-					this.dialogNewResPerson.show = true
+					this.dialogNewResPerson.show = true					
 				}
-			}
+				
+			},
+			handleJump(item,unitContent) {   
+				// 传递标题
+				console.log(item);
+				console.log(unitContent);
+				console.log(typeof(item));
+				sessionStorage.setItem('item',JSON.stringify(item.row))
+				sessionStorage.setItem('unitContent',unitContent)
+				this.$router.push({ name: 'ProjectMeasurement'});				
+			},
+			
+			ResponsiblPerson() {
+				this.ResponsiblPersonData = []
+				for(var i = 0;i<this.buildPerson.栋号长.length;i++)	{
+					this.buildPerson.栋号长[i].position = '栋号长'
+					this.ResponsiblPersonData.push(this.buildPerson.栋号长[i])
+				}
+				for(var i = 0;i<this.buildPerson.质量员.length;i++)	{
+					this.buildPerson.质量员[i].position = '质量员'
+					this.ResponsiblPersonData.push(this.buildPerson.质量员[i])
+				}	
+				for(var i = 0;i<this.buildPerson.施工员.length;i++)	{
+					this.buildPerson.施工员[i].position = '施工员'
+					this.ResponsiblPersonData.push(this.buildPerson.施工员[i])
+				}		
+				// this.ResponsiblPersonData.push(this.buildPerson.栋号长,this.buildPerson.质量员,this.buildPerson.施工员)
+				console.log(this.ResponsiblPersonData)
+			},
 		},
-		watch: {
-			"registerBaseData.timeStamp": {
-				handler(newValue, oldValue) {
-					this.getSectionInfo()
-				}
-			}
-		}
+
 	}
 </script>
 
@@ -573,5 +679,8 @@
 	}
 	.content-table-box {
 		margin: 0.625rem;
+	}
+	.text {
+		margin: 10px 20px;
 	}
 </style>

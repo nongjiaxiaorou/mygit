@@ -58,15 +58,22 @@
 		break;
 		case 'getHandDrawPic':
 			$proTimeStamp = isset($_POST["proTimeStamp"]) ? $_POST["proTimeStamp"] : '';
+			// $pointStatus = isset($_POST["pointStatus"]) ? $_POST["pointStatus"] : '';
 			$inspectPosition = isset($_POST["inspectPosition"]) ? $_POST["inspectPosition"] : '';	
 			$inspectItem = isset($_POST["inspectItem"]) ? $_POST["inspectItem"] : '';	
-			$sql = "SELECT `manualPrimaryPic` FROM `tb_inspectaccept_measure` WHERE `proTimestamp` = '$proTimeStamp' AND `inspectPosition` = '$inspectPosition' AND `inspectItem` = '$inspectItem'";
+			$sql = "SELECT * FROM `tb_inspectaccept_measure` WHERE `proTimestamp` = '$proTimeStamp' AND `inspectPosition` = '$inspectPosition' AND `inspectItem` = '$inspectItem'";
 			$result = $conn->query($sql);
 			if ($result) {
 				$row = $result->fetch_assoc();
-				$handDeawPic = $row['manualPrimaryPic'];
+				$manualPrimaryPic = $row['manualPrimaryPic'];
+				$primaryPicName = $row['manualPrimaryPicName'];
+				$manualRetestPic = $row['manualRetestPic'];
+				$retestPicName = $row['manualRetestPicName'];
 				$ret_data['code'] = 1;
-				$ret_data['handDeawPic'] = $handDeawPic;
+				$ret_data['manualPrimaryPic'] = $manualPrimaryPic;
+				$ret_data['primaryPicName'] = $primaryPicName;
+				$ret_data['manualRetestPic'] = $manualRetestPic;
+				$ret_data['retestPicName'] = $retestPicName;
 			} else {
 				$ret_data['code'] = 0;
 			}

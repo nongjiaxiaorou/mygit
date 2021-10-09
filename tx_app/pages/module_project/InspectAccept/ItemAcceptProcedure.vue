@@ -7,7 +7,8 @@
 			</uni-view>
 			<uni-view class="uni-section__content">
 				<uni-text class="uni-section__content-title distraction">
-					<span>实名制工序验收</span></uni-text>
+					<span>实名制工序验收</span>
+				</uni-text>
 			</uni-view>
 		</uni-view>
 		<uni-list>
@@ -67,7 +68,7 @@
 			}
 		},
 		onLoad: function(option) {
-			// console.log(option)
+			console.log(option)
 			this.currentData = option.currentData
 			this.cardParam = option.cardParam
 			this.proTimeStamp = option.proTimeStamp
@@ -88,17 +89,20 @@
 				}
 				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
-					// console.log(res.data)
+					console.log(res.data)
 					uni.hideLoading()//隐藏加载中转圈圈
 					this.isloading = false//取消遮罩层
 					if(res.data.code){
 						for(var key in res.data.data){
 							for(var i=0;i<this.processAcceptList.length;i++){
 								if(this.processAcceptList[i].id==key){
+									console.log(key);
+									console.log(i);
 									this.processAcceptList[i].badge = res.data.data[key].split('|')[0]
 								}
 							}
 						}
+						console.log(this.processAcceptList);
 						this.inspectStr = res.data.data
 					} 
 				}, error => {
@@ -106,12 +110,16 @@
 				})
 			},
 			//进入工序验收界面
-			toItemProcessAccept(item) {
-				item.inspectStr = this.inspectStr[item.id]==undefined?'':this.inspectStr[item.id]
+			toItemProcessAccept(item) { 
+				console.log(item)
+				console.log(this.inspectStr);
+				item.inspectStr = this.inspectStr[item.id]==undefined?'':this.inspectStr[item.id] 
 				let itemStr = JSON.stringify(item)
-				// console.log(itemStr)
+				console.log(itemStr)
 				let buildSelData = JSON.stringify(this.buildSelData)
 				let currentData = this.currentData
+				console.log(currentData);
+				console.log(buildSelData);
 				uni.navigateTo({
 					url:`AcceptCheck?currentData=${currentData}`+`&cardParam=${this.cardParam}`+`&proTimeStamp=${this.proTimeStamp}`+`&buildSelData=${buildSelData}`+`&itemStr=${itemStr}`+`&enterFlag=normal`
 				})

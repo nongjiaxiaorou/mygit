@@ -18,10 +18,10 @@
 		</view>
 		<view class="handDrawFather">
 			<view class="">
-				<h3 style="font-size: 30rpx;">手绘布点</h3>
+				<h3 style="font-size: 30rpx;">手绘布点:{{picName}}</h3>
 			</view>
 			<view class="">
-				<image :src="handDrawSrc" mode=""></image>
+				<image style="width: 300px; height: 200px;" :src="handDrawSrc" mode=""></image>
 			</view>
 		</view>
 	</view> 
@@ -39,6 +39,7 @@
 			return {
 				measureSrc: '../../../static/images/null.jpg',  // 实测布点图
 				handDrawSrc: '../../../static/images/null.jpg', // 手绘布点图
+				picName: '暂无图片',
 				currentData: '',
 				cardParam: '',
 				projectId: '',
@@ -53,15 +54,6 @@
 		},
 		onReady() {
 			const that = this
-			// uni.getStorage({
-			// 	key: 'buildInfo',
-			// 	success: function(res) {
-			// 		that.buildSelData = res.data
-			// 		that.buildNum = res.data.build
-			// 		that.floor = res.data.floor
-			// 		that.section = res.data.section			
-			// 	}
-			// })
 			const result = uni.getStorageSync ('buildInfo');
 			console.log(result)
 			if (result) {
@@ -75,21 +67,8 @@
 			if (result) {
 				that.proTimeStamp = result1.proTimeStamp
 			}
-			// uni.getStorage({
-			// 	key: 'userInfo',
-			// 	success: function(res) {
-			// 		that.proTimeStamp = res.data.proTimeStamp
-			// 	}
-			// })
-			// console.log(that.proTimeStamp)
-			// setTimeout(function(){
-			// 	that.getPointStatus()
-			// },1000)
 			that.getFloorPic ();
-			that.getHandDrawPic ();
-			// console.log(this.buildSelData)
-			// console.log(this.floor)
-			// console.log(this.section)
+			that.getPointStatus();
 		},
 		onLoad(option) {
 			this.currentData = JSON.parse(option.currentData)
@@ -111,7 +90,7 @@
 					data: this.measureSrc
 				})
 				uni.navigateTo({
-					url:`PointSetting?currentData=${cardParamStr}`+`&projectId=${this.projectId}`+`&cardParam=${cardParamStr}` +`&measureSrc=${this.measureSrc}`
+					url:`PointSetting3?currentData=${cardParamStr}`+`&projectId=${this.projectId}`+`&cardParam=${cardParamStr}` +`&measureSrc=${this.measureSrc}`
 				})
 			},
 			getFloorPic () {
@@ -154,7 +133,18 @@
 				that.myRequest.httpRequest (opts , param , isLoading).then (res => {
 					console.log(res.data)
 					if (res.data.code) {
-						that.handDrawSrc = that.imageUrl_pc + '/handDrawPic/' + res.data.handDeawPic;
+						if (that.pointStatus == '初测') {
+							if (res.data.manualPrimaryPic != '') {
+								that.handDrawSrc = that.imageUrl_pc + '/floorPic/manualPic/' + res.data.manualPrimaryPic;
+								that .picName = res.data.primaryPicName
+							}
+						} else {
+							if (res.data.manualRetestPic != '') {
+								that.handDrawSrc = that.imageUrl_pc + '/floorPic/manualPic/' + res.data.manualRetestPic;
+								that .picName = res.data.retestPicName
+							}
+						}
+						console.log(that.picName);
 					} else {}
 				}) , error => {
 					console.log(error);
@@ -176,7 +166,7 @@
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					console.log(res.data)
 					if(res.data.code){
-						this.pointStatus = res.data.data[0].status
+						that.pointStatus = res.data.data[0].status
 						that.getHandDrawPic ();
 						console.log(res.data.data[0].status)
 						uni.showToast({

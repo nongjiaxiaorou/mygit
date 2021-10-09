@@ -8,7 +8,7 @@
 			</view>
             <view class="neil-modal__content" :class="content ? 'neil-modal--padding' : ''" :style="{textAlign:align}">
                 <template v-if="content">
-                    <text class="modal-content">{{content}}</text>
+                    <text class="modal-content">{{content}}</text> 
                 </template>
                 <template v-else>
                     <slot />
@@ -165,7 +165,7 @@
         &__container {
             position: absolute;
 			z-index: 999;
-            top: 50%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%, -50%) ;
             transition: transform 0.3s;

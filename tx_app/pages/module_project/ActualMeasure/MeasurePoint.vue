@@ -1,6 +1,6 @@
 <template>
-	<view class="list">
-		<uni-section :title="statusTitle" type="line" >
+	<view class="list" >
+		<uni-section :title="statusTitle" type="line" style="margin-top: 0px;">
 			<button  type="primary" v-show="isIntoReTest"  @click="tapRetest">点击进行复测</button>
 			<button v-show="isIntoFinalTest" type="warn" @click="tapFinalTest">点击进行终测</button>
 		</uni-section>
@@ -36,10 +36,10 @@
 					    </view>
 					</uni-collapse-item-badge>
 					<!-- 初测新增测点 -->
-					<neil-modal v-show="show=='show'+item.id" @close="closeModal(item.id)" title="新增测点" @confirm="saveMeasurePoint" @reset="resetPointFunc(item)">
+					<neil-modal v-show="show=='show'+item.id"   @close="closeModal(item.id)" title="新增测点" @confirm="saveMeasurePoint(item)" @reset="resetPointFunc(item)">
 					<!-- <neil-modal v-show="true" @close="closeModal(item.id)" title="新增测点"> -->
-					    <view class="input-view">
-							<scroll-view scroll-y="true" class="scroll-Y">
+					    <view class="input-view" style="height: 10%;">
+							<!-- <scroll-view scroll-y="true" class="scroll-Y"> -->
 								<view class="input-name">
 									<view>检查内容：</view>
 									<input type="text" :value="item.measureType" disabled="disabled"/>
@@ -54,25 +54,25 @@
 								</view>
 								<view class="input-name">
 									<view>测点总数：</view>
-									<input type="number" auto-blur="true" v-model="totalNum" placeholder="测点总数(必填)"/>
+									<input type="number" v-model="totalNum" placeholder="测点总数(必填)" @confirm="enter()"/>
 								</view>
 								<view class="input-name">
 									<view>不合格数：</view>
-									<input type="number" auto-blur="true" v-model="unqualifiedNum" placeholder="不合格数量(必填)" @input="onChangeHandler($event,item)"/>
+									<input type="number"   adjust-position="true" v-model="unqualifiedNum" placeholder="不合格数量(必填)" @input="onChangeHandler($event,item)" />
 								</view>
 								<view class="input-name" >
 									<view>缺项：</view>
 									<radio value="true" style="flex: 1;" @click="missItemFunc" :checked="missItem" />
 								</view>
-								<view class="scroll-style">
-									<!-- <scroll-view scroll-y="true" class="scroll-Y"> -->
-										<view class="input-name" v-for="(item,index) in unQualifiedArr" :key="index">									
+								<view class="scroll-style" style="height: 70px;">
+									<scroll-view scroll-y="true" class="scroll-Y">
+										<view id="unQualifiedPoint" class="input-name" v-for="(item,index) in unQualifiedArr" :key="index">									
 											<view class="num">{{item.number}}：</view>
-											<input type="number" auto-blur="true" v-model="item.value" :id="item.isCorrect=='true'?'font-red':'font-green'" placeholder="请输入不合格值" @input="unQualifiedChange($event,item)"/>
+											<input type="number" ref="inputson" confirm-type="go" v-model="item.value" :id="item.isCorrect=='true'?'font-red':'font-green'" placeholder="请输入不合格值" @input="unQualifiedChange($event,item)"  />
 										</view>
-									<!-- </scroll-view> -->
+									</scroll-view>
 								</view>
-							</scroll-view>
+							<!-- </scroll-view> -->
 					    </view>
 					</neil-modal>
 					<!-- 复测新增测点 -->
@@ -84,17 +84,17 @@
 					        </view>
 							<view class="input-name">
 							    <view>编号类型：</view>
-							    <input type="text" :value="item.number" disabled="disabled"/>
+							    <input type="text" :value="item.number" disabled="disabled" />
 							</view>
 							<view class="input-name">
 							    <view>合格范围：</view>
-							    <input type="text" :value="item.range" disabled="disabled"/>
+							    <input type="text" :value="item.range" disabled="disabled" />
 							</view> 
 							<view class="scroll-style" >
 								<scroll-view scroll-y="true" class="scroll-Y" scroll-with-animation="true" show-scrollbar="true">
 									<view class="input-name" v-for="(item3,index3) in item.children" :key="index3">
 										<view class="num">{{item3.number}}：</view>
-										<input type="number" auto-blur="true" v-model="item3.retestVal" :id="item3.status=='合格'?'font-green':'font-red'" placeholder="测点复测值" @input="unQualifiedChange1($event,item3)"/>
+										<input  type="number" auto-blur="true" v-model="item3.retestVal" :id="item3.status=='合格'?'font-green':'font-red'" placeholder="测点复测值" @input="unQualifiedChange1($event,item3)"/>
 									</view>
 								</scroll-view>
 							</view>
@@ -210,7 +210,25 @@
 			this.getPointStatus()
 			
 		},
+		watch: {
+			// unQualifiedArr: function() {
+			// 	let arr = [];
+			// 	for (let i = 0; i < this.unQualifiedArr.length; i++) {
+			// 		arr.push(false)
+			// 	}
+			// 	this.focusIndex = arr;
+			// 	// console.log(this.focusIndex);
+			// }
+		},
 		computed: {
+			// focusIndex () {
+			// 	let focusIndex = [];
+			// 	for (let i = 0; i < this.unQualifiedArr.length; i++) {
+			// 		focusIndex.push(false)
+			// 	}
+			// 	console.log(focusIndex);
+			// 	return focusIndex
+			// },
 			isIntoReTest () {
 				if (this.pointStatus == '初测') {
 					let missItemNum = 0;
@@ -264,6 +282,35 @@
 			}
 		},
 		methods: { 
+			// nextOne (index,s) {
+			// 	const a = this.$refs.inputson[index];
+			// 	const b = this.$refs.inputson[index+1];
+			// 	// b.addElementListener('click', function() {console.log('click11');})
+			// 	// this.$refs.inputson[index+1].click();
+			// 	console.log(b);
+			// 	b.setAttribute("focus",true)
+			// 	// a.removeAttribute("focus")
+			// 	console.log(a.focus);
+				// console.log(document.getElementById("input1"));
+				// document.getElementById("input1").focus()
+			// },
+			// focus (index) {
+				// const num = index - 1;
+				// if (num > 0)
+				// // 	this.focusIndex[num] = false;
+				// const a = this.$refs.inputson;
+				// const b = this.$refs.inputson[index+1];
+				 // this.$refs.input1.value;
+				// c.focus();
+				// console.log(b);
+				// // console.log(a);				
+				// console.log(document.getElementById("input1"))
+				// document.getElementById("input1").focus()
+				// console.log(that.$refs.input1.value);
+				// b.focus()
+				// const query = uni.createSelectorQuery().in(this).selectAll('.inputUnqualified')
+				// console.log(a);
+			// },
 			// 复测按钮函数
 			tapRetest () {
 				const that = this
@@ -382,16 +429,29 @@
 			    })
 			},
 			onChangeHandler(e,item) {
+				const that = this;
 				this.unQualifiedArr = []
-				let unQualifiedNum = e.target.value
-				for (var i=0;i<unQualifiedNum;i++) {
-					this.unQualifiedArr.push({
-						measureType: item.measureType,
-						number: item.number+(i+1),
-						value: '',
-						isCorrect: ''
-					})
+				let unQualifiedNum = parseInt(e.target.value) 
+				for (let j = 0; j < that.pointArr.length; j++) {
+					let temp = that.pointArr[j];
+					console.log(temp)
+					if (item.measureType == temp.measureType) {
+						console.log(temp)
+						let qualifiedNum = parseInt(temp.qualifiedBadge) ;
+						let unqualifiedNumOld = parseInt(temp.unQualifiedBadge) 
+						let length = qualifiedNum + unqualifiedNumOld;
+						for (var i=length;i<unQualifiedNum+length;i++) {
+							that.unQualifiedArr.push({
+								measureType: item.measureType,
+								number: item.number+(i+1),
+								value: '',
+								isCorrect: ''
+							})
+						}
+					}
 				}
+				console.log(that.unQualifiedArr)
+				
 			},
 			//获取测点类型
 			getMeasureType() {
@@ -408,8 +468,9 @@
 					measureId:that.cardParam.id
 				} 
 				console.log(that.pointStatus)
-				let isLoading = false//是否需要加载动画
+				let isLoading = true//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
+					console.log(res.data);
 					if(res.data.code){
 						this.pointArr = res.data.data
 						console.log(this.pointArr)
@@ -438,7 +499,7 @@
 					measureId:this.cardParam.id,
 					projectId: this.projectId
 				} 
-				console.log(that.pointStatus)
+				// console.log(that.pointStatus)
 				let isLoading = false//是否需要加载动画
 				this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 					console.log(res.data)
@@ -476,8 +537,10 @@
 					console.log(error);
 				})
 			},
-			saveMeasurePoint() {
-				console.log(222)
+			saveMeasurePoint(item) {
+				console.log(item)
+				const unqualifiedNum = parseInt(item.unQualifiedBadge) ;
+				const qualifiedNum = parseInt(item.qualifiedBadge);
 				let unQualifiedStr = JSON.stringify(this.unQualifiedArr)
 				if(unQualifiedStr.indexOf('false') >= 0){
 					uni.showToast({
@@ -500,9 +563,10 @@
 						measureType: this.measureType,
 						pointStatus: this.pointStatus,
 						number: this.number,
-						missItem: this.missItem
+						missItem: this.missItem,
+						totalNumOld: unqualifiedNum + qualifiedNum
 					} 
-					// console.log(param)
+					console.log(param)
 					let isLoading = true//是否需要加载动画
 					this.myRequest.httpRequest (opts, param,isLoading).then(res => {
 						console.log(res.data)
@@ -728,6 +792,7 @@
 	    padding-left: 30upx;
 	    box-sizing: border-box;
 	}
+
 	
 	.input-name::after {
 	    content: " ";
