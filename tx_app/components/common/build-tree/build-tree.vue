@@ -208,9 +208,9 @@
 				// console.log(item)
 				let children = that.props.children
 				// that.buildSelData
-			    console.log(this.tree)
+			    // console.log(this.tree)
 				for(var i=0;i<this.tree.length;i++){
-					console.log(this.tree[i].name)
+					// console.log(this.tree[i].name)
 					if(this.tree[i].name==that.buildSelData.section){
 						that.parent.push(this.tree[i])
 						var build = this.tree[i][children]
@@ -238,7 +238,7 @@
 					}
 					// that.tree = item[children]
 					// that.parent.push(item)
-					console.log(that.parent)
+					// console.log(that.parent)
 				}
 			}
 		},
@@ -246,11 +246,11 @@
 			"trees": {
 				handler(newValue, oldValue) {
 					let obj = this.commonFunc.Es5duplicate(newValue,'name')
-					console.log(obj)
+					// console.log(obj)
 					this.tree = JSON.parse(JSON.stringify(obj))
 					// this.tree = this.commonFunc.Es5duplicate(newValue,'name')
 					this.allData = JSON.parse(JSON.stringify(obj))
-					console.log(newValue);
+					// console.log(newValue);
 					this.getSeletedBuilding()
 				}
 		    }

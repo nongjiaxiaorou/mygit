@@ -6,9 +6,8 @@
 //	$password = "asdf1@34";
 //	$dbname = "dfr";	
 
-	// $servername = "112.74.34.150:3306";
-	$servername = "127.0.0.1:3306";
-	// $servername = "112.74.34.150:3306";
+	// $servername = "112.74.34.150:3306"; // 服务器
+	$servername = "127.0.0.1:3306";		// 本地
 	$username = "root";
 	$password = "123456";
 	$dbname = "txzlgl";

@@ -453,7 +453,7 @@
 }
 
 .btn-block {
-	position: fixed; //将button按钮固定在页面底部
+	position: fixed; /* 将button按钮固定在页面底部 */
 	bottom: 5px;
 	text-align: center;
 	width: 80%;

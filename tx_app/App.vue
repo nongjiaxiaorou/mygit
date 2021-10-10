@@ -2,9 +2,11 @@
 import { mapMutations } from 'vuex';
 export default {
 	onLaunch: function() {
+		console.log('App Launch')
 		uni.getStorage({
 			key: 'userInfo',
 			success: res => {
+				console.log(res.data);
 				this.login(res.data);
 				
 				uni.getStorage({
@@ -25,12 +27,13 @@ export default {
 				
 			},
 			fail: error => {
+				console.log(123)
 				plus.navigator.closeSplashscreen();
 			}
 		});
 	},
 	methods: {
-		...mapMutations(['login'])
+		...mapMutations(['login']),
 	},
 	onShow: function() {
 		console.log('App Show');
